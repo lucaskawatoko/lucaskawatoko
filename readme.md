@@ -2,6 +2,8 @@
 
 [![Typing SVG](https://readme-typing-svg.herokuapp.com/?color=ffffff&size=35&center=true&vCenter=true&width=1000&lines=olá,+meu+nome+é+Lucas+Kawatoko;tenho+20+anos;moro+no+Brasil,+SP;seja+bem-vindo+ao+meu+perfil!+:%29)](https://git.io/typing-svg)
 
+
+
 <h3> tecnologias que utilizo 🛠️</h3>
 
 <div style="display: inline_block"><br>
