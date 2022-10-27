@@ -1,5 +1,7 @@
 <audio preload="auto" autoplay loop="True">
     <source src ="0011672.mp3" type="audio/mpeg">
+    <source src ="0011672.ogg" type="audio/ogg">
+    <source src ="0011672.wav" type="audio/wav">
 </audio>
 
 <img width=100% src="https://capsule-render.vercel.app/api?type=waving&color=6495ED&height=120&section=header"/> 
