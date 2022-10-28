@@ -12,9 +12,6 @@
   <img  alt="lucas-html5" height="50" width="40"    aling="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-plain-wordmark.svg">
   <img alt="lucas-css3" height="50" width="40"  aling="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-plain-wordmark.svg">
   <img alt="lucas-js" heigth="50" width="50"  aling="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" />
-  <video aling="right" src="Pexels Videos 1550080.mp4" width="200" preload="metadata" autoplay="True" loop = "True"></video>
-          
-
 
 <h3>formas de entrar em contato comigo 🗣️</h3>
  
@@ -29,7 +26,7 @@
 ![Windows](https://img.shields.io/badge/-Windows-0D1117?style=for-the-badge&logo=windows&labelColor=0049f9)&nbsp;
 ![microsoft-office](https://img.shields.io/badge/-microsoft_office-0D1117?style=for-the-badge&logo=microsoft-office&labelColor=d75413)&nbsp;
  
-  ![Snake animation](https://github.com/lucaskawatoko/lucaskawatoko/blob/output/github-contribution-grid-snake.svg)
+![Snake animation](https://github.com/lucaskawatoko/lucaskawatoko/blob/output/github-contribution-grid-snake.svg)
  
 </div>
 
