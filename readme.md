@@ -1,8 +1,3 @@
-<audio preload="auto" autoplay loop="True">
-    <source src ="0011672.mp3" type="audio/mpeg">
-    <source src ="0011672.ogg" type="audio/ogg">
-    <source src ="0011672.wav" type="audio/wav">
-</audio>
 
 <img width=100% src="https://capsule-render.vercel.app/api?type=waving&color=6495ED&height=120&section=header"/> 
 
@@ -12,11 +7,12 @@
 <h3> tecnologias que utilizo 🛠️</h3>
 
 <div style="display: inline_block"><br>
-  <img alt="lucas-python" height="50" width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original-wordmark.svg">
-  <img  alt="lucas-jupyter" height="50" width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jupyter/jupyter-original-wordmark.svg">
-  <img  alt="lucas-html5" height="50" width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-plain-wordmark.svg">
-  <img  alt="lucas-css3" height="50" width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-plain-wordmark.svg">
-  <img alt="lucas-js" heigth="50" width="50" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" />
+  <img alt="lucas-python" height="50" width="40" aling="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original-wordmark.svg">
+  <img  alt="lucas-jupyter" height="50" width="40" aling="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jupyter/jupyter-original-wordmark.svg">
+  <img  alt="lucas-html5" height="50" width="40"    aling="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-plain-wordmark.svg">
+  <img alt="lucas-css3" height="50" width="40"  aling="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-plain-wordmark.svg">
+  <img alt="lucas-js" heigth="50" width="50"  aling="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" />
+  <video aling="right" src="Pexels Videos 1550080.mp4" width="200" preload="metadata" autoplay="True" loop = "True"></video>
           
 
 
@@ -42,6 +38,6 @@
 <p align="center"><img align="center" src="https://profile-counter.glitch.me/{lucaskawatoko}/count.svg"/></p> 
 <br></div>
 
-<img width=100% src="https://capsule-render.vercel.app/api?type=waving&color=6495ED&height=120&section=footer"/>
+<img width=100% src="https://capsule-render.vercel.app/api?type=waving&color=649EEE&height=120&section=footer"/>
 
 
