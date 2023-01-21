@@ -12,8 +12,6 @@
   <img  alt="lucas-html5" height="50" width="40"    aling="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-plain-wordmark.svg">
   <img alt="lucas-css3" height="50" width="40"  aling="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-plain-wordmark.svg">
   <img alt="lucas-js" heigth="50" width="50"  aling="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" />
-  <img alt="lucas-Node-js" heigth="50" width="50"  aling="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original-wordmark.svg" />
-
 
 <h3>formas de entrar em contato comigo 🗣️</h3>
  
