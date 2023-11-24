@@ -1,6 +1,9 @@
 <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=6495ED&height=120&section=header"/> 
 
-[![Typing SVG](https://readme-typing-svg.herokuapp.com/?color=ffffff&size=35&center=true&vCenter=true&width=1000&lines=olá,+meu+nome+é+Lucas+Kawatoko;tenho+20+anos;moro+no+Brasil,+SP;seja+bem-vindo+ao+meu+perfil!+:%29)](https://git.io/typing-svg)
+<img src="https://readme-typing-svg.herokuapp.com/?color=9ac9ff&size=30&center=true&vCenter=true&width=800&lines=Olá,+eu+sou+Lucas+Kawatoko;Tenho+21+anos;Sou+apaixonado+por+tecnologia;Estudante+e+desenvolvedor;Bem-vindo+ao+meu+perfil!+🚀" />
+
+
+
 
 ## 🛠️ Linguagens 🛠️
 
