@@ -25,5 +25,6 @@ jobs:
 
       - name: Adicionar links
         run: |
-          sed -i 's/.*/- [\1](https://github.com/lucaskawatoko\/\1)/' README.md
+          sed -i 's,.*, - [\0](https://github.com/lucaskawatoko/\0),' README.md
+
 
