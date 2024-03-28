@@ -1,0 +1,28 @@
+name: Atualizar Readme
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Inicialização
+        run: |
+          echo "" >> README.md
+          echo "## Meus Últimos Repositórios" >> README.md
+          curl -s "https://api.github.com/users/${{ github.actor }}/repos?per_page=2&sort=created" | jq -r '.[].name' | sort -r >> README.md
+          echo "" >> README.md
+
+      - name: Pegar últimos repositórios
+        run: |
+          curl -s "https://api.github.com/users/${{ github.actor }}/repos?per_page=2&sort=created" | jq -r '.[].name' >> README.md
+
+      - name: Adicionar links
+        run: |
+          sed -i 's/.*/- [\1](https://github.com/${{ github.actor }}/\1)/' README.md
