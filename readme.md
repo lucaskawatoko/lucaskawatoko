@@ -49,10 +49,9 @@
  
 ![Snake animation](https://github.com/lucaskawatoko/lucaskawatoko/blob/output/github-contribution-grid-snake.svg)
 
-## Últimos projetos
+## Últimos Repositórios
 
-<!-- BLOG-POST-LIST:START -->
-<!-- BLOG-POST-LIST:END -->
+
 
 <div align="center">
 <br><p align="centre"><b>Contagem de visitantes</b></p>  
