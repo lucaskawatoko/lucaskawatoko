@@ -1,9 +1,4 @@
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=6495ED&height=120&section=header"/> 
-
-<img src="https://readme-typing-svg.herokuapp.com/?color=9ac9ff&size=30&center=true&vCenter=true&width=800&lines=Olá,+eu+sou+Lucas+Kawatoko;Tenho+21+anos;Sou+apaixonado+por+tecnologia;Estudante+e+desenvolvedor;Bem-vindo+ao+meu+perfil!+🚀" />
-
-
-
+<img src="https://readme-typing-svg.herokuapp.com/?color=9ac9ff&size=30&center=true&vCenter=true&width=800&lines=Olá,+eu+sou+Lucas+Kawatoko;Tenho+21+anos;Sou+apaixonado+por+tecnologia;Estudante+e+desenvolvedor;Bem-vindo(a)+ao+meu+perfil!+🚀" />
 
 ## 🛠️ Linguagens 🛠️
 
@@ -46,20 +41,9 @@
 
   ![Github Pages](https://img.shields.io/badge/github%20pages-121013?style=for-the-badge&logo=github&logoColor=white)
   ![Netlify](https://img.shields.io/badge/netlify-%23000000.svg?style=for-the-badge&logo=netlify&logoColor=#00C7B7)
- 
-<<<<<<< HEAD
-  ![snake gif](https://github.com/lucaskawatoko/lucaskawatoko/blob/output/github-contribution-grid-snake.gif)
-=======
-![snake gif](https://github.com/lucaskawatoko/lucaskawatoko/blob/output/github-contribution-grid-snake.gif)
->>>>>>> 3f2b978ca0b5f40e28c0132514c5067fc1d7492e
-
-<!-- ÚLTIMOS REPOSITÓRIOS -->
-
-
 
 <div align="center">
 <br><p align="centre"><b>Contagem de visitantes</b></p>  
 <p align="center"><img align="center" src="https://profile-counter.glitch.me/{lucaskawatoko}/count.svg"/></p> 
 <br></div>
 
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=649EEE&height=120&section=footer"/>
