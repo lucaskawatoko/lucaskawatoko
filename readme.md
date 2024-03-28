@@ -47,7 +47,7 @@
   ![Github Pages](https://img.shields.io/badge/github%20pages-121013?style=for-the-badge&logo=github&logoColor=white)
   ![Netlify](https://img.shields.io/badge/netlify-%23000000.svg?style=for-the-badge&logo=netlify&logoColor=#00C7B7)
  
-![Snake animation](https://github.com/lucaskawatoko/lucaskawatoko/blob/output/github-contribution-grid-snake.svg)
+![snake gif](https://github.com/lucaskawatoko/lucaskawatoko/blob/output/github-contribution-grid-snake.gif)
 
 <!-- ÚLTIMOS REPOSITÓRIOS -->
 
