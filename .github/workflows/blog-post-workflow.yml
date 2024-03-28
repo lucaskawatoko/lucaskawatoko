@@ -26,12 +26,12 @@ jobs:
       - name: Pull in latest repositories and update README
         run: |
           curl -s "https://api.github.com/users/${{ github.actor }}/repos?per_page=5&sort=created" | jq -r '.[].name' > temp.txt
-          echo "## Últimos Repositórios" > README_temp.md
+          echo "## Últimos Repositórios" > readme_temp.md
           while IFS= read -r line; do
-            echo "- $line" >> README_temp.md
+            echo "- $line" >> readme_temp.md
           done < temp.txt
-          sed -i '/## Últimos Repositórios/,$d' README.md
-          cat README_temp.md >> README.md
-          rm temp.txt README_temp.md
+          sed -i '/## Últimos Repositórios/,$d' readme.md
+          cat readme_temp.md >> readme.md
+          rm temp.txt readme_temp.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
