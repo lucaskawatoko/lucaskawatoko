@@ -25,6 +25,8 @@ jobs:
 
       - name: Adicionar links
         run: |
-          sed -i 's,.*, - [\0](https://github.com/lucaskawatoko/\0),' README.md
+          sed -i '/Snake animation/,$!b;/^<div align="center">/Ib;a\
+          \n## 💻 Ferramentas do meu dia a dia 💻\n\n  [Visual Studio Code](https://img.shields.io/badge/-Visual%20Studio%20Code-0D1117?style=for-the-badge&logo=visual-studio-code&logoColor=007ACC&labelColor=0D1117)&nbsp;\n  [Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)\n  [GitHub](https://img.shields.io/badge/-GitHub-0D1117?style=for-the-badge&logo=github&labelColor=0D1117)&nbsp;\n  [Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)\n\n## 🧩 Franeworks 🧩\n\n  [Bootstrap](https://img.shields.io/badge/bootstrap-%238511FA.svg?style=for-the-badge&logo=bootstrap&logoColor=white)\n  [Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white)\n  [TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)\n\n## 💾 Banco de dados 💾\n\n  [SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)\n\n## ☁️ Hospedagem ☁️\n\n  [Github Pages](https://img.shields.io/badge/github%20pages-121013?style=for-the-badge&logo=github&logoColor=white)\n  [Netlify](https://img.shields.io/badge/netlify-%23000000.svg?style=for-the-badge&logo=netlify&logoColor=#00C7B7)' README.md
+        
 
 
