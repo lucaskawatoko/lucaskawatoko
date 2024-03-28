@@ -18,6 +18,9 @@ jobs:
       - name: Pull in latest repositories
         run: |
           curl -s "https://api.github.com/users/${{ github.actor }}/repos?per_page=5&sort=created" | jq -r '.[].name' > temp.txt
+          if [ ! -f README.md ]; then
+            touch README.md
+          fi
           sed -i '/## Últimos Repositórios/q' README.md
           echo "## Últimos Repositórios" >> README.md
           while IFS= read -r line; do
