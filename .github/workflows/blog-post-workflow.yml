@@ -15,16 +15,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Pull in latest repositories
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - name: Install jq
+        run: sudo apt-get install jq
+      - name: Pull in latest repositories and update README
         run: |
           curl -s "https://api.github.com/users/${{ github.actor }}/repos?per_page=5&sort=created" | jq -r '.[].name' > temp.txt
-          if [ ! -f README.md ]; then
-            touch README.md
-            echo "# Meu Perfil\n" >> README.md
-          fi
-          sed -i '/## Últimos Repositórios/q' README.md
-          echo "## Últimos Repositórios" >> README.md
+          echo "## Últimos Repositórios" > README_temp.md
           while IFS= read -r line; do
-            echo "- $line" >> README.md
+            echo "- $line" >> README_temp.md
           done < temp.txt
-          rm temp.txt
+          sed -i '/## Últimos Repositórios/,$d' README.md
+          cat README_temp.md >> README.md
+          rm temp.txt README_temp.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
