@@ -48,7 +48,12 @@
   ![Netlify](https://img.shields.io/badge/netlify-%23000000.svg?style=for-the-badge&logo=netlify&logoColor=#00C7B7)
  
 ![Snake animation](https://github.com/lucaskawatoko/lucaskawatoko/blob/output/github-contribution-grid-snake.svg)
- 
+
+## Últimos projetos
+
+<!-- BLOG-POST-LIST:START -->
+<!-- BLOG-POST-LIST:END -->
+
 <div align="center">
 <br><p align="centre"><b>Contagem de visitantes</b></p>  
 <p align="center"><img align="center" src="https://profile-counter.glitch.me/{lucaskawatoko}/count.svg"/></p> 

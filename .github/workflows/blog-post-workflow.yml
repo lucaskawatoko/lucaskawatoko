@@ -1,0 +1,20 @@
+name: Latest repositories workflow
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Executar o fluxo de trabalho automaticamente a cada hora, na hora
+  workflow_dispatch: # Executar o fluxo de trabalho manualmente
+
+permissions:
+  contents: write # Para escrever os conteúdos gerados no arquivo README
+
+jobs:
+  update-readme-with-repos:
+    name: Update README with latest repositories
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Pull in latest repositories
+        run: |
+          curl -s "https://api.github.com/users/${{ github.actor }}/repos?per_page=5&sort=created" | jq -r '.[].name' >> README.md
