@@ -47,7 +47,11 @@
   ![Github Pages](https://img.shields.io/badge/github%20pages-121013?style=for-the-badge&logo=github&logoColor=white)
   ![Netlify](https://img.shields.io/badge/netlify-%23000000.svg?style=for-the-badge&logo=netlify&logoColor=#00C7B7)
  
+<<<<<<< HEAD
   ![snake gif](https://github.com/lucaskawatoko/lucaskawatoko/blob/output/github-contribution-grid-snake.gif)
+=======
+![snake gif](https://github.com/lucaskawatoko/lucaskawatoko/blob/output/github-contribution-grid-snake.gif)
+>>>>>>> 3f2b978ca0b5f40e28c0132514c5067fc1d7492e
 
 <!-- ÚLTIMOS REPOSITÓRIOS -->
 
