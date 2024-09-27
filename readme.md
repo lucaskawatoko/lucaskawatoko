@@ -1,10 +1,11 @@
-<img src="https://readme-typing-svg.herokuapp.com/?color=9ac9ff&size=30&center=true&vCenter=true&width=800&lines=Olá,+eu+sou+Lucas+Kawatoko;Tenho+21+anos;Sou+apaixonado+por+tecnologia;Estudante+e+desenvolvedor;Bem-vindo(a)+ao+meu+perfil!+🚀" />
+<img src="https://readme-typing-svg.herokuapp.com/?color=9ac9ff&size=30&center=true&vCenter=true&width=800&lines=Olá,+eu+sou+Lucas+Kawatoko;Tenho+22+anos;Sou+apaixonado+por+tecnologia;Estudante+e+desenvolvedor;Bem-vindo(a)+ao+meu+perfil!+🚀" />
 
 ## 🛠️ Linguagens 🛠️
 
   ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
   ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
   ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+  <br>
   ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
   ![Markdown](https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor=white)
   ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
