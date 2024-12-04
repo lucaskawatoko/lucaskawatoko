@@ -1,56 +1,93 @@
-<img src="https://readme-typing-svg.herokuapp.com/?color=9ac9ff&size=30&center=true&vCenter=true&width=800&lines=Olá,+eu+sou+Lucas+Kawatoko;Tenho+21+anos;Sou+apaixonado+por+tecnologia;Estudante+e+desenvolvedor;Bem-vindo(a)+ao+meu+perfil!+🚀" />
-
 ## 🛠️ Linguagens 🛠️
 
-  ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
-  ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
-  ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
-  ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
-  ![Markdown](https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor=white)
-  ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+<img src="https://img.icons8.com/color/48/python--v1.png" alt="Python" title="Linguagem Python" width="48" height="48" />
+<img src="https://img.icons8.com/color/48/html-5--v1.png" alt="HTML5" title="HTML5 - Linguagem de marcação" width="48" height="48" />
+<img src="https://img.icons8.com/color/48/css3.png" alt="CSS3" title="CSS3 - Folhas de estilo" width="48" height="48" />
+<img src="https://img.icons8.com/color/48/javascript--v1.png" alt="JavaScript" title="JavaScript - Linguagem de programação para web" width="48" height="48" />
+<br />
+<img src="https://img.icons8.com/ios-filled/50/markdown.png" alt="Markdown" title="Markdown - Linguagem de marcação leve" width="48" height="48" />
+<img src="https://img.icons8.com/color/48/typescript.png" alt="TypeScript" title="TypeScript - Superset de JavaScript" width="48" height="48" />
+<img src="https://uxwing.com/wp-content/themes/uxwing/download/file-and-folder-type/yaml-file-format-icon.png" alt="YAML" title="YAML - Linguagem de serialização de dados" width="48" height="48" />
+<img src="https://img.icons8.com/color/48/sass.png" alt="Sass" title="Sass - Pré-processador CSS" width="48" height="48" />
 
-## 💻 IDEs/Editores 💻
 
-  ![Jupyter Notebook](https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&logo=jupyter&logoColor=white)
-  ![PyCharm](https://img.shields.io/badge/pycharm-143?style=for-the-badge&logo=pycharm&logoColor=black&color=black&labelColor=green)
-  ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
 
-## 🗣️ Formas de entrar em contato comigo 🗣️
- 
-<a href="https://mail.proton.me/u/1/inbox"><img src="https://img.shields.io/badge/-Gmail-%23333?style=for-the-badge&logo=gmail&logoColor=white" target="_blank"></a>
-<a href="https://www.linkedin.com/in/lucaskawatoko/" target="_blank"><img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" target="_blank"></a> 
 
-## 💻 Ferramentas do meu dia a dia 💻
 
-  ![Visual Studio Code](https://img.shields.io/badge/-Visual%20Studio%20Code-0D1117?style=for-the-badge&logo=visual-studio-code&logoColor=007ACC&labelColor=0D1117)&nbsp;
-  ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)
-  ![GitHub](https://img.shields.io/badge/-GitHub-0D1117?style=for-the-badge&logo=github&labelColor=0D1117)&nbsp;
-  ![GitHub Action](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
-  <br>
-  ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
-  ![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
-  ![Docker](https://img.shields.io/badge/docker-257bd6?style=for-the-badge&logo=docker&logoColor=white)
-  ![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)
 
-## 🧩 Franeworks 🧩
+<h2>💻 IDEs/Editores 💻</h2>
 
-  ![Bootstrap](https://img.shields.io/badge/bootstrap-%238511FA.svg?style=for-the-badge&logo=bootstrap&logoColor=white)
-  ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)
-  ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+<img src="https://img.icons8.com/fluency/48/jupyter.png" alt="Jupyter Notebook" title="Jupyter Notebook">
+<img src="https://img.icons8.com/color/48/pycharm--v2.png" alt="PyCharm" title="PyCharm">
+<img src="https://img.icons8.com/color/48/visual-studio-code-2019.png" alt="Visual Studio Code" title="Visual Studio Code">
 
-## 💾 Banco de dados 💾
+<h2>🗣️ Formas de entrar em contato comigo 🗣️</h2>
 
-  ![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)
-  ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+<div style="text-align: left;">
+  <a href="mailto:lucaskawatoko@gmail.com?subject=Oportunidade%20de%20Colaboração&body=Olá%20Lucas,%0D%0A%0D%0AEstou%20impressionado%20com%20seu%20trabalho%20como%20desenvolvedor%20back-end%20e%20gostaria%20de%20discutir%20uma%20possível%20colaboração.%20Por%20favor,%20entre%20em%20contato%20para%20que%20possamos%20conversar%20mais%20sobre%20isso.%0D%0A%0D%0AAtenciosamente,%0D%0A[Seu%20Nome]" title="Enviar e-mail para Lucas Kawatoko" style="display: inline-block; margin: 0 5px;">
+    <img src="https://img.icons8.com/color/48/gmail-new.png" alt="Gmail" width="48" height="48" />
+  </a>
+  <a href="https://www.linkedin.com/in/lucaskawatoko/" target="_blank" title="LinkedIn" style="display: inline-block; margin: 0 10px;">
+    <img src="https://img.icons8.com/color/48/linkedin.png" alt="LinkedIn" width="48" height="48" />
+  </a>
+  <a href="/docs/Currículo-Lucas-Kawatoko-dev-junior.pdf" download="Currículo-Lucas-Kawatoko-dev-junior.pdf" title="Baixar Arquivo" style="display: inline-block; margin: 0 10px;">
+    <img src="https://img.icons8.com/ios/50/parse-resume.png" alt="Download" width="48" height="48" />
+    Meu currículo
+  </a>
+</div>
+
+
+
+<h2>💻 Ferramentas do meu dia a dia 💻</h2>
+
+<img src="https://img.shields.io/badge/-Visual%20Studio%20Code-0D1117?style=for-the-badge&logo=visual-studio-code&logoColor=007ACC" alt="Visual Studio Code" title="Visual Studio Code">
+<img src="https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white" alt="Git" title="Git">
+<img src="https://img.shields.io/badge/-GitHub-0D1117?style=for-the-badge&logo=github&labelColor=0D1117" alt="GitHub" title="GitHub">
+<img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" alt="GitHub Actions" title="GitHub Actions">
+<img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows" title="Windows">
+<img src="https://img.shields.io/badge/WSL-0D1117?style=for-the-badge&logo=linux&logoColor=white" alt="WSL" title="Windows Subsystem for Linux">
+<br>
+<img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="Linux" title="Linux">
+<img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Ubuntu" title="Ubuntu">
+<img src="https://img.shields.io/badge/docker-257bd6?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" title="Docker">
+<img src="https://img.shields.io/badge/Docker%20Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Compose" title="Docker Compose">
+<img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white" alt="Notion" title="Notion">
+
+
+
+<h2>🧩 Frameworks 🧩</h2>
+
+<img src="https://img.icons8.com/fluency/48/bootstrap.png" alt="Bootstrap" title="Bootstrap" width="48" height="48">
+<img src="https://img.icons8.com/color/48/django.png" alt="Django" title="Django">
+<img src="https://img.icons8.com/color/48/tailwind_css.png" alt="TailwindCSS" title="TailwindCSS">
+
+<h2>💾 Banco de dados 💾</h2>
+
+<img src="https://img.icons8.com/ios/50/sqlite.png" alt="SQLite" title="SQLite" width="48" height="48">
+<img src="https://img.icons8.com/color/48/postgreesql.png" alt="PostgreSQL" title="PostgreSQL">
 
 ## ☁️ Hospedagem ☁️
 
-  ![Github Pages](https://img.shields.io/badge/github%20pages-121013?style=for-the-badge&logo=github&logoColor=white)
-  ![Netlify](https://img.shields.io/badge/netlify-%23000000.svg?style=for-the-badge&logo=netlify&logoColor=#00C7B7)
-  ![Heroku](https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white)
+![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-121013?style=for-the-badge&logo=github&logoColor=white)
+![Netlify](https://img.shields.io/badge/Netlify-000000.svg?style=for-the-badge&logo=netlify&logoColor=#00C7B7)
+<img src="https://img.icons8.com/color/48/heroku.png" alt="Heroku" title="Heroku" width="48" height="48">
+![Hostinger](https://img.shields.io/badge/Hostinger-0B0B45?style=for-the-badge&logo=hostinger&logoColor=white)
 
-<div align="center">
-<br><p align="centre"><b>Contagem de visitantes</b></p>  
-<p align="center"><img align="center" src="https://profile-counter.glitch.me/{lucaskawatoko}/count.svg"/></p> 
-<br></div>
+
+## 📊 Estatísticas do GitHub 📊
+
+<p align="left">
+  <a href="https://github.com/seu-usuario?tab=followers">
+    <img alt="Seguidores no GitHub" title="Siga-me no GitHub" src="https://img.shields.io/github/followers/lucaskawatoko?color=236ad3&labelColor=1155ba&style=for-the-badge&logo=github&label=Seguidores&logoColor=white"/>
+  </a>
+  <a href="https://github.com/seu-usuario?tab=repositories">
+    <img alt="Repositórios Públicos" title="Veja meus repositórios" src="https://img.shields.io/badge/Repositórios%20Públicos-30-%232c3e50?style=for-the-badge&logo=github&logoColor=white"/>
+  </a>
+  <br>
+  <a href="https://github.com/seu-usuario?tab=stars">
+    <img alt="Total de Estrelas" title="Total de estrelas nos repositórios" src="https://img.shields.io/badge/Total%20de%20Estrelas-25-%23ffc107?style=for-the-badge&logo=star&logoColor=white"/>
+  </a>
+  <h3>Contador de visitas</h3>
+  <img alt="Contador de visitas" title="contador de visitas" src="https://komarev.com/ghpvc/?username=seu-usuario&color=blue&style=for-the-badge&label=VISITAS&base=0"/>
+</p>
 
