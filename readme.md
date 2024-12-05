@@ -1,12 +1,12 @@
 ## 🛠️ Linguagens 🛠️
 
 <div align="left">
-    <img src="https://img.icons8.com/color/48/python--v1.png" alt="Python" title="Python" width="48" height="48" />
-    <img src="https://img.icons8.com/color/48/html-5--v1.png" alt="HTML5" title="HTML5" width="48" height="48" />
-    <img src="https://img.icons8.com/color/48/css3.png" alt="CSS3" title="CSS3" width="48" height="48" />
-    <img src="https://img.icons8.com/color/48/javascript--v1.png" alt="JavaScript" title="JavaScript" width="48" height="48" />
+    <img src="imgs/Python.png" alt="Python" title="Python" width="96" height="96" />
+    <img src="imgs/HTML5.png" alt="HTML5" title="HTML5" width="96" height="96" />
+    <img src="imgs/css.png" alt="CSS3" title="CSS3" width="96" height="96"/>
+    <img src="imgs/javascript.png" alt="JavaScript" title="JavaScript" width="96" height="96" />
     <br>
-    <img src="https://img.icons8.com/ios-filled/50/markdown.png" alt="Markdown" title="Markdown" width="48" height="48" />
+    <img src="imgs/markdown.png" alt="Markdown" title="Markdown" width="48" height="48" />
     <img src="https://img.icons8.com/color/48/typescript.png" alt="TypeScript" title="TypeScript" width="48" height="48" />
     <img src="https://uxwing.com/wp-content/themes/uxwing/download/file-and-folder-type/yaml-file-format-icon.png" alt="YAML" title="YAML" width="48" height="48" />
     <img src="https://img.icons8.com/color/48/sass.png" alt="Sass" title="Sass" width="48" height="48" />
@@ -81,7 +81,7 @@
     <img src="https://img.shields.io/badge/GitHub%20Pages-121013?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Pages" />
     <img src="https://img.shields.io/badge/Netlify-000000.svg?style=for-the-badge&logo=netlify&logoColor=#00C7B7" alt="Netlify" />
     <img src="https://img.icons8.com/color/48/heroku.png" alt="Heroku" title="Heroku" width="48" height="48" />
-    <img src="https://img.shields.io/badge/Hostinger-0B0B45?style=for-the-badge&logo=hostinger&logoColor=white" alt="Hostinger" />
+    <img src="imgs/Hostinger_Logo.png" alt="Hostinger" width="96" height="96" />
 </div>
 
 ---
