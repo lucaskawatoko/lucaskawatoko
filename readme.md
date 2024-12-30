@@ -28,10 +28,10 @@
 
 <div align="left">
     <a href="mailto:lucaskawatoko@gmail.com?subject=Oportunidade%20de%20Colaboração&body=Olá%20Lucas,%0D%0A%0D%0AEstou%20impressionado%20com%20seu%20trabalho%20como%20desenvolvedor%20back-end%20e%20gostaria%20de%20discutir%20uma%20possível%20colaboração.%20Por%20favor,%20entre%20em%20contato%20para%20que%20possamos%20conversar%20mais%20sobre%20isso.%0D%0A%0D%0AAtenciosamente,%0D%0A[Seu%20Nome]">
-        <img src="imgs/Logo-Gmail.png" alt="Gmail" width="96" height="96" />
+        <img src="imgs/Logo-Gmail.png" alt="Gmail" title="Gmail" width="96" height="96" />
     </a>
     <a href="https://www.linkedin.com/in/lucaskawatoko/" target="_blank">
-        <img src="imgs/Logo-Linkedin.png" alt="LinkedIn" width="96" height="96" />
+        <img src="imgs/Logo-Linkedin.png" alt="LinkedIn" title="LinkedIn" width="96" height="96" />
     </a>
 </div>
 
@@ -41,15 +41,15 @@
 
 <div align="left">
     <img src="imgs/Logo-Vscode.png" alt="VS Code" title="Visual Studio Code" width="96" height="96" />
-    <img src="imgs/Logo-Git.png" alt="Git" title="Git" />
-    <img src="imgs/Logo-GitHub.png" alt="GitHub" width="96" height="96" title="GitHub"/>
-    <img src="imgs/Logo-GitHub-Actions.png" alt="GitHub Actions" width="96" height="96" title="GitHub Actions" />
-    <img src="imgs/Logo-Linux.png" alt="Linux" width="96" height="96"title="Linux" />
+    <img src="imgs/Logo-Git.png" alt="Git" title="Git" width="96" height="96" />
+    <img src="imgs/Logo-GitHub.png" alt="GitHub" title="GitHub" width="96" height="96" />
+    <img src="imgs/Logo-GitHub-Actions.png" alt="GitHub Actions" title="GitHub Actions" width="96" height="96" />
+    <img src="imgs/Logo-Linux.png" alt="Linux" title="Linux" width="96" height="96" />
     <br>
-    <img src="imgs/Logo-Ubuntu.png" alt="Ubuntu" width="96" height="96" title="Ubuntu" />
-    <img src="imgs/Logo-Docker.png" alt="Docker" width="96" height="96" title="Docker"/>
-    <img src="imgs/Logo-Docker_compose.png" alt="Docker Compose" width="96" height="96" title="Docker Compose"/>
-    <img src="imgs/Logo-Notion.png" alt="Notion" width="96" height="96" title="Notion" />
+    <img src="imgs/Logo-Ubuntu.png" alt="Ubuntu" title="Ubuntu" width="96" height="96" />
+    <img src="imgs/Logo-Docker.png" alt="Docker" title="Docker" width="96" height="96" />
+    <img src="imgs/Logo-Docker_compose.png" alt="Docker Compose" title="Docker Compose" width="96" height="96" />
+    <img src="imgs/Logo-Notion.png" alt="Notion" title="Notion" width="96" height="96" />
 </div>
 
 ---
@@ -76,11 +76,11 @@
 ## ☁️ Hospedagem ☁️
 
 <div align="left">
-    <img src="imgs/Logo-GitHub-Pages.png" alt="GitHub Pages" width="96" height="96" />
-    <img src="imgs/Logo-Netlify.png" alt="Netlify" width="96" height="96" />
+    <img src="imgs/Logo-GitHub-Pages.png" alt="GitHub Pages" title="GitHub Pages" width="96" height="96" />
+    <img src="imgs/Logo-Netlify.png" alt="Netlify" title="Netlify" width="96" height="96" />
     <img src="imgs/Logo-Heroku.png" alt="Heroku" title="Heroku" width="96" height="96" />
-    <img src="imgs/Logo-Hostinger.png" alt="Hostinger" width="96" height="96" />
-    <img src="imgs/Logo-HostGator.png" alt="HostGator" width="96" height="96" />
+    <img src="imgs/Logo-Hostinger.png" alt="Hostinger" title="Hostinger" width="96" height="96" />
+    <img src="imgs/Logo-HostGator.png" alt="HostGator" title="HostGator" width="96" height="96" />
 </div>
 
 ---
@@ -88,12 +88,13 @@
 ## 📄 Meu Currículo 📄
 
 <div align="left">
-    <a href="docs/Currículo-Lucas-Kawatoko-dev-junior.pdf" download="Curriculo-Lucas-Kawatoko">
+    <a href="docs/Currículo-Lucas-Kawatoko-dev-junior.pdf" download>
         <button style="background-color: #03cffc; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 5px;">
             📥 Baixar Currículo
         </button>
     </a>
 </div>
+
 
 ---
 
@@ -101,13 +102,14 @@
 
 <div align="left">
     <a href="https://github.com/seu-usuario?tab=followers">
-        <img src="https://img.shields.io/github/followers/lucaskawatoko?color=236ad3&labelColor=1155ba&style=for-the-badge&logo=github&label=Seguidores&logoColor=white" alt="Seguidores no GitHub" />
+        <img src="https://img.shields.io/github/followers/lucaskawatoko?color=236ad3&labelColor=1155ba&style=for-the-badge&logo=github&label=Seguidores&logoColor=white" alt="Seguidores no GitHub" title="Seguidores no GitHub" />
     </a>
     <a href="https://github.com/seu-usuario?tab=repositories">
-        <img src="https://img.shields.io/badge/Repositórios%20Públicos-30-%232c3e50?style=for-the-badge&logo=github&logoColor=white" alt="Repositórios Públicos" />
+        <img src="https://img.shields.io/badge/Repositórios%20Públicos-30-%232c3e50?style=for-the-badge&logo=github&logoColor=white" alt="Repositórios Públicos" title="Repositórios Públicos" />
     </a>
     <a href="https://github.com/seu-usuario?tab=stars">
-        <img src="https://img.shields.io/badge/Total%20de%20Estrelas-25-%23ffc107?style=for-the-badge&logo=star&logoColor=white" alt="Total de Estrelas" />
+        <img src="https://img.shields.io/badge/Total%20de%20Estrelas-25-%23ffc107?style=for-the-badge&logo=star&logoColor=white" alt="Total de Estrelas" title="Total de Estrelas" />
     </a>
     <h3>Contador de visitas</h3>
-    <img alt="Contador de visitas" title="contador de visitas" src="https://komarev.com/ghpvc/?username=seu-usuario&color=blue&style=for-the-badge&label=VISITAS&base=0"/>
+    <img alt="Contador de visitas" title="Contador de visitas" src="https://komarev.com/ghpvc/?username=seu-usuario&color=blue&style=for-the-badge&label=VISITAS&base=0"/>
+</div>
