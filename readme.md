@@ -1,3 +1,8 @@
+<div align="center">
+    <img src="https://readme-typing-svg.demolab.com?font=Dancing+Script&weight=700&size=28&pause=1000&color=03CFFC&center=true&width=800&lines=👋+Olá,+sou+Lucas+Kawatoko!;💻+Trabalho+como+desenvolvedor+back-end,+focado+em+Python.;🌟+Gosto+de+resolver+problemas+e+criar+soluções+simples+e+eficazes.;🚀+Sempre+aprendendo+e+buscando+novos+desafios.;🤝+Bora+trocar+uma+ideia+e+fazer+acontecer!" alt="Typing SVG" />
+</div>
+
+
 ## 🛠️ Linguagens 🛠️
 
 <div align="left">
@@ -95,19 +100,19 @@
     </a>
 </div>
 
-
 ---
 
 ## 📊 Estatísticas do GitHub 📊
 
 <div align="left">
 
-[![Seguidores no GitHub](https://img.shields.io/github/followers/lucaskawatoko?color=6c63ff&labelColor=4c4cfc&style=for-the-badge&logo=github&label=Seguidores&logoColor=white)](https://github.com/lucaskawatoko?tab=followers)<br>
-[![Repositórios Públicos](https://img.shields.io/badge/Repositórios%20Públicos-30-%234caf50?style=for-the-badge&logo=github&logoColor=white)](https://github.com/lucaskawatoko?tab=repositories)<br>
-[![Total de Estrelas](https://img.shields.io/badge/Total%20de%20Estrelas-25-%23ff9800?style=for-the-badge&logo=github&logoColor=white)](https://github.com/lucaskawatoko?tab=stars)
+![Seguidores no GitHub](https://img.shields.io/github/followers/lucaskawatoko?label=Seguidores&style=for-the-badge&logo=github&logoColor=white)<br>
+![Total de Estrelas no GitHub](https://img.shields.io/github/stars/lucaskawatoko?label=Total%20de%20Estrelas&style=for-the-badge&logo=github&logoColor=gold)<br>
+![Repositórios Públicos](https://img.shields.io/badge/Repositórios%20Públicos-30-blue?style=for-the-badge&logo=github)<br>
 
+</div>
 
 ### **Contador de Visitas**
-[![Contador de Visitas](https://img.shields.io/badge/Visitas-3,300-%236c63ff?style=for-the-badge&logo=github&logoColor=white)](https://github.com/lucaskawatoko)
+<p align="left">   <img alingn="center" src="https://profile-counter.glitch.me/lucaskawatoko/count.svg" /></p>
 </div>
 
