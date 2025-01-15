@@ -55,6 +55,7 @@
     <img src="imgs/Logo-Docker.svg" alt="Docker" title="Docker" width="96" height="96" />
     <img src="imgs/Logo-Docker-Compose.svg" alt="Docker Compose" title="Docker Compose" width="96" height="96" />
     <img src="imgs/Logo-Notion.svg" alt="Notion" title="Notion" width="96" height="96" />
+    <img src="imgs/Logo-Nginx.svg" alt="Nginx" title="Nginx" width="96" height="96" />
 </div>
 
 ---
