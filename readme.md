@@ -1,5 +1,9 @@
 <div align="center">
-    <img src="https://readme-typing-svg.demolab.com?font=Dancing+Script&weight=700&size=28&pause=1000&color=03CFFC&center=true&width=800&lines=👋+Olá,+sou+Lucas+Kawatoko!;💻+Trabalho+como+desenvolvedor+back-end,+focado+em+Python.;🌟+Gosto+de+resolver+problemas+e+criar+soluções+simples+e+eficazes.;🚀+Sempre+aprendendo+e+buscando+novos+desafios.;🤝+Bora+trocar+uma+ideia+e+fazer+acontecer!" alt="Typing SVG" />
+  <a href="https://git.io/typing-svg">
+    <img 
+      src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=100&duration=3500&pause=1000&center=true&vCenter=true&width=800&lines=%F0%9F%91%8B+Ol%C3%A1%2C+sou+Lucas+Kawatoko!;%F0%9F%92%BB+Trabalho+como+desenvolvedor+back-end%2C+focado+em+Python.;%F0%9F%8C%9F+Gosto+de+resolver+problemas+e+criar+solu%C3%A7%C3%B5es+simples+e+eficazes.;%F0%9F%9A%80+Sempre+aprendendo+e+buscando+novos+desafios.;%F0%9F%A4%9D+Bora+trocar+uma+ideia+e+fazer+acontecer!" 
+      alt="Typing SVG" />
+  </a>
 </div>
 
 
