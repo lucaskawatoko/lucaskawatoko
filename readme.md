@@ -118,6 +118,6 @@
 </div>
 
 ### **Contador de Visitas**
-<p align="left">   <img alingn="center" src="https://profile-counter.glitch.me/lucaskawatoko/count.svg" /></p>
+<p align="left">   <img align="center" src="https://profile-counter.glitch.me/lucaskawatoko/count.svg" /></p>
 </div>
 
