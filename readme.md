@@ -115,11 +115,4 @@
 ![Total de Estrelas no GitHub](https://img.shields.io/github/stars/lucaskawatoko?label=Total%20de%20Estrelas&style=for-the-badge&logo=github&logoColor=gold)<br>
 ![Repositórios Públicos](https://img.shields.io/badge/Repositórios%20Públicos-30-blue?style=for-the-badge&logo=github)<br>
 
-<br clear="both">
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/lucaskawatoko/lucaskawatoko/output/pacman-contribution-graph-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/lucaskawatoko/lucaskawatoko/output/pacman-contribution-graph.svg">
-  <img alt="pacman contribution graph" src="https://raw.githubusercontent.com/lucaskawatoko/lucaskawatoko/output/pacman-contribution-graph.svg">
-</picture>
-
+</div>
