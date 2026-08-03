@@ -28,7 +28,7 @@
 ## Atividade
 
 <div align="center">
-  <img src="imgs/contribution-animation.gif?v=8" alt="Cobrinha comendo meus repositórios" width="700" />
+  <img src="imgs/contribution-animation.gif?v=9" alt="Cobrinha comendo meus repositórios" width="700" />
   <p><em>a cobrinha come meus repositórios públicos</em></p>
 </div>
 
@@ -76,54 +76,11 @@
 
 ---
 
-## Usar no seu perfil
+## Gostou do GIF?
 
-Este GIF é gerado automaticamente pela GitHub Actions com os dados do **seu** usuário: a cobrinha percorre a grade comendo cada repositório público (ou contribuição) e o score conta o tamanho de cada um. Cores personalizáveis em hex.
-
-1. No seu repositório de perfil (`usuario/usuario`), crie `.github/workflows/contribution-gif.yml`:
-
-   ```yaml
-   name: contribution-gif
-
-   on:
-     push:
-       branches: [main]
-     schedule:
-       - cron: "0 0 * * *"
-
-   permissions:
-     contents: write
-
-   jobs:
-     gif:
-       runs-on: ubuntu-latest
-       steps:
-         - uses: actions/checkout@v4
-
-         - name: Generate snake GIF
-           uses: lucaskawatoko/git-maker/.github/actions/generate-gifs@main
-           with:
-             username: "seu-usuario"
-             data: "repos"          # repos ou commits
-             color: "#3fb950"       # cor da cobrinha em hex
-             background: "#0d1117"  # cor de fundo em hex
-             food: "#e5534b"        # cor da comida em hex
-
-         - name: Commit
-           run: |
-             git config user.name "github-actions[bot]"
-             git config user.email "github-actions[bot]@users.noreply.github.com"
-             git add imgs/contribution-animation.gif
-             git diff --cached --quiet || git commit -m "chore: atualiza gif de contribuição"
-             git push
-   ```
-
-2. Adicione no seu `readme.md`:
-
-   ```md
-   <img src="imgs/contribution-animation.gif" alt="Contribuições" width="700" />
-   ```
-
-3. A animação é atualizada a cada push e diariamente. Para gerar na hora, rode manualmente em **Actions → Gerar animação de contribuições → Run workflow**.
-
-> Cada repositório público vira uma comida — repositórios privados não aparecem. Para `data: commits` (contribuições) é preciso definir o secret `GH_TOKEN` no repositório. A action é mantida no repositório [lucaskawatoko/git-maker](https://github.com/lucaskawatoko/git-maker).
+<div align="center">
+  <a href="https://github.com/lucaskawatoko/git-maker">
+    <img src="https://img.shields.io/badge/git--maker-snake--custom-3fb950?style=flat&logo=github&logoColor=white" alt="git-maker" />
+  </a>
+  <p>Basta clicar aqui! Crie o seu no repositório <a href="https://github.com/lucaskawatoko/git-maker">git-maker</a> — cores, comida (repos ou commits) e fundo tudo personalizável em hex.</p>
+</div>
