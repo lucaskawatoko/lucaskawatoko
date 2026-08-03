@@ -28,7 +28,7 @@
 ## Atividade
 
 <div align="center">
-  <img src="imgs/contribution-animation.gif" alt="Grid de contribuições" width="718" />
+  <img src="imgs/contribution-animation.gif?v=2" alt="Grid de contribuições" width="718" />
   <p><em>meus commits espiralando para dentro do buraco negro</em></p>
 </div>
 
