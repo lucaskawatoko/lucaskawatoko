@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Gera a animação do OVNI abduzindo commits para o README do perfil.
+"""Gera a animação do buraco negro devorando os commits do perfil.
 
-O OVNI sobrevoa o grid de contribuições e "abduz" as células de commits com
-um raio trator, deixando um rastro vazio e estrelas pelo caminho.
+Uma singularidade no grid de contribuições suga os bloquinhos um a um: uma
+frente de consumo varre o grid da esquerda para a direita e cada célula é
+puxada numa espiral (spaghettification), acelerando, esticando e brilhando
+até ser absorvida pelo anel de acreção.
 
 Uso:
     python scripts/generate_contribution_animation.py [--mock] [--output PATH]
@@ -19,8 +21,6 @@ import math
 import os
 import random
 import sys
-from dataclasses import dataclass
-from typing import Optional
 from urllib.request import Request, urlopen
 
 from PIL import Image, ImageDraw
@@ -40,22 +40,25 @@ GRID_W = WEEKS * CELL + (WEEKS - 1) * GAP
 GRID_H = DAYS * CELL + (DAYS - 1) * GAP
 PAD = 16
 GRID_TOP = 150
-BOTTOM_PAD = 24
+BOTTOM_PAD = 64  # espaço extra abaixo do grid para o disco do buraco negro
 
 WIDTH = GRID_W + 2 * PAD
 HEIGHT = GRID_TOP + GRID_H + BOTTOM_PAD
 
 FPS = 24
-STEP = 9          # px por frame no deslocamento do OVNI
-BW = 30           # meia largura do raio trator na altura do grid
-CONSUME = 2 * BW  # distância até a célula ser totalmente abduzida
-OUTRO_FRAMES = 16  # frames finais em que o grid "regenera"
+STEP = 8          # px por frame no deslocamento da frente de consumo
+CONSUME = 90      # largura da frente que "engole" cada coluna
+OUTRO_FRAMES = 18  # frames finais em que o grid "regenera"
 
 # --------------------------------------------------------------------------
-# Paleta "aurora espacial"
+# Buraco negro (posição relativa à grade) e paleta "cosmos"
 # --------------------------------------------------------------------------
-BG_TOP = (13, 17, 23)
-BG_BOTTOM = (1, 4, 9)
+BH_X = PAD + GRID_W / 2
+BH_Y = GRID_TOP + GRID_H + 16
+EVENT_HORIZON = 13  # raio em que a célula é absorvida
+
+BG_TOP = (10, 12, 20)
+BG_BOTTOM = (1, 2, 6)
 EMPTY_CELL = (22, 27, 34)
 LEVELS = {
     1: (15, 70, 66),
@@ -63,7 +66,7 @@ LEVELS = {
     3: (28, 165, 134),
     4: (45, 226, 183),
 }
-BEAM = (121, 192, 255)
+GOLD = (255, 205, 120)
 STAR = (240, 246, 252)
 
 
@@ -143,35 +146,57 @@ def level_for(count: int) -> int:
     return 4
 
 
+def build_counts(days: list[tuple[str, int]]) -> list[list[int]]:
+    counts = [[0] * DAYS for _ in range(WEEKS)]
+    for week_idx in range(WEEKS):
+        for day_idx in range(DAYS):
+            pos = week_idx * DAYS + day_idx
+            if pos < len(days):
+                counts[week_idx][day_idx] = level_for(days[pos][1])
+    return counts
+
+
 # --------------------------------------------------------------------------
-# Elementos visuais
+# Fundo estático: gradiente + nebulosas + estrelas
 # --------------------------------------------------------------------------
 def build_background() -> Image.Image:
     img = Image.new("RGBA", (WIDTH, HEIGHT), BG_BOTTOM + (255,))
     draw = ImageDraw.Draw(img)
     for y in range(HEIGHT):
         t = y / max(1, HEIGHT - 1)
-        color = tuple(
-            round(a + (b - a) * t) for a, b in zip(BG_TOP, BG_BOTTOM)
-        )
+        color = tuple(round(a + (b - a) * t) for a, b in zip(BG_TOP, BG_BOTTOM))
         draw.line([(0, y), (WIDTH, y)], fill=color + (255,))
     return img
+
+
+def _radial_glow(draw: ImageDraw.ImageDraw, cx: float, cy: float, radius: int,
+                 color: tuple[int, int, int], peak: int) -> None:
+    for r in range(radius, 0, -1):
+        alpha = int((1 - r / radius) * peak)
+        draw.ellipse((cx - r, cy - r, cx + r, cy + r), fill=color + (alpha,))
+
+
+def build_nebula_layer() -> Image.Image:
+    layer = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(layer)
+    _radial_glow(draw, 90, 60, 210, (74, 62, 158), 16)
+    _radial_glow(draw, WIDTH - 120, 90, 200, (30, 130, 160), 14)
+    return layer
 
 
 def build_star_layer() -> Image.Image:
     rng = random.Random(7)
     layer = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
     draw = ImageDraw.Draw(layer)
-    for _ in range(140):
+    for _ in range(150):
         x = rng.randint(0, WIDTH - 1)
-        y = rng.randint(0, GRID_TOP - 26)
+        y = rng.randint(0, GRID_TOP - 20)
         alpha = rng.randint(50, 200)
         radius = rng.choice((1, 1, 1, 2))
-        draw.ellipse(
-            (x - radius, y - radius, x + radius, y + radius),
-            fill=STAR + (alpha,),
-        )
-    for _ in range(10):
+        color = STAR if rng.random() < 0.85 else GOLD
+        draw.ellipse((x - radius, y - radius, x + radius, y + radius),
+                     fill=color + (alpha,))
+    for _ in range(8):
         x = rng.randint(0, WIDTH - 1)
         y = rng.randint(10, GRID_TOP - 40)
         alpha = rng.randint(80, 160)
@@ -179,188 +204,194 @@ def build_star_layer() -> Image.Image:
         draw.line([(x - 3, y), (x + 3, y)], fill=STAR + (alpha,), width=1)
         draw.line([(x, y - 3), (x, y + 3)], fill=STAR + (alpha,), width=1)
         draw.ellipse((x - r, y - r, x + r, y + r), fill=STAR + (alpha + 40,))
-    planet = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
-    pdraw = ImageDraw.Draw(planet)
-    pdraw.ellipse((WIDTH - 130, 22, WIDTH - 50, 102), fill=(47, 129, 247, 22))
-    pdraw.arc(
-        (WIDTH - 130, 22, WIDTH - 50, 102), 20, 160,
-        fill=(121, 192, 255, 50), width=2,
-    )
-    layer = Image.alpha_composite(layer, planet)
     return layer
 
 
+# --------------------------------------------------------------------------
+# Grade de contribuições
+# --------------------------------------------------------------------------
 def draw_panel(draw: ImageDraw.ImageDraw) -> None:
     x0 = PAD - 5
     y0 = GRID_TOP - 5
     x1 = PAD + GRID_W + 5
     y1 = GRID_TOP + GRID_H + 5
-    draw.rounded_rectangle(
-        (x0, y0, x1, y1), radius=8, outline=(48, 54, 61, 140), width=1
-    )
+    draw.rounded_rectangle((x0, y0, x1, y1), radius=8,
+                           outline=(48, 54, 61, 150), width=1)
 
 
-def draw_grid(
-    draw: ImageDraw.ImageDraw, counts: list[list[int]]
-) -> list[tuple[float, float, int]]:
-    cells: list[tuple[float, float, int]] = []
+# --------------------------------------------------------------------------
+# Buraco negro: horizonte de eventos + anel de acreção
+# --------------------------------------------------------------------------
+def draw_black_hole(overlay: Image.Image, frame_i: int) -> None:
+    draw = ImageDraw.Draw(overlay)
+    pulse = 1 + 0.06 * math.sin(frame_i * 0.35)
+    tilt = 0.72  # achatamento do disco (perspectiva)
+
+    def ring(rx: float, alpha: int, color: tuple[int, int, int],
+             width: int) -> None:
+        r = rx * pulse
+        draw.ellipse((BH_X - r, BH_Y - r * tilt,
+                      BH_X + r, BH_Y + r * tilt),
+                     outline=color + (alpha,), width=width)
+
+    ring(40, 14, (255, 190, 110), 10)
+    ring(26, 90, (255, 185, 105), 7)
+    ring(19, 150, (255, 215, 150), 4)
+    ring(15, 220, (255, 240, 210), 2)
+
+    # Partículas quentes em órbita (anel "irradiado")
+    for i in range(3):
+        a = frame_i * 0.5 + i * (2 * math.pi / 3)
+        px = BH_X + math.cos(a) * 21
+        py = BH_Y + math.sin(a) * 21 * tilt
+        alpha = int(170 + 70 * math.sin(frame_i * 0.9 + i))
+        draw.ellipse((px - 2, py - 2, px + 2, py + 2),
+                     fill=(255, 235, 190, alpha))
+
+    # Horizonte de eventos
+    r = EVENT_HORIZON
+    draw.ellipse((BH_X - r, BH_Y - r, BH_X + r, BH_Y + r),
+                 fill=(0, 0, 0, 255))
+    draw.ellipse((BH_X - r, BH_Y - r, BH_X + r, BH_Y + r),
+                 outline=(255, 255, 255, 200), width=1)
+
+
+# --------------------------------------------------------------------------
+# Frente de consumo e vórtice espiral (spaghettification)
+# --------------------------------------------------------------------------
+def draw_front(overlay: Image.Image, bx: float) -> None:
+    draw = ImageDraw.Draw(overlay)
+    if bx < PAD - 4 or bx > PAD + GRID_W + 4:
+        return
+    draw.line([(bx, GRID_TOP), (bx, GRID_TOP + GRID_H)],
+              fill=GOLD + (36,), width=2)
+    for off, alpha in ((3, 22), (6, 12), (10, 8)):
+        draw.line([(bx - off, GRID_TOP), (bx - off, GRID_TOP + GRID_H)],
+                  fill=GOLD + (alpha,), width=2)
+        draw.line([(bx + off, GRID_TOP), (bx + off, GRID_TOP + GRID_H)],
+                  fill=GOLD + (alpha,), width=2)
+
+
+def _lerp(a: tuple[int, int, int], b: tuple[int, int, int],
+          t: float) -> tuple[int, int, int]:
+    return tuple(round(x + (y - x) * t) for x, y in zip(a, b))
+
+
+def cell_geometry() -> list[tuple[float, float]]:
+    centers: list[tuple[float, float]] = []
     for w in range(WEEKS):
         for d in range(DAYS):
             gx = PAD + w * (CELL + GAP)
             gy = GRID_TOP + d * (CELL + GAP)
-            level = counts[w][d]
-            color = LEVELS[level] if level > 0 else EMPTY_CELL
-            draw.rectangle((gx, gy, gx + CELL - 1, gy + CELL - 1), fill=color)
-            cells.append((gx + CELL / 2, gy + CELL / 2, level))
-    return cells
+            centers.append((gx + CELL / 2, gy + CELL / 2))
+    return centers
 
 
-def draw_ufo(
-    frame: Image.Image,
-    overlay: Image.Image,
-    bx: float,
-    ufo_y: float,
-    frame_i: int,
-) -> None:
-    draw = ImageDraw.Draw(frame)
-    odraw = ImageDraw.Draw(overlay)
-    bob = math.sin(frame_i * 0.45) * 3
-
-    # Corpo da nave
-    y = ufo_y + bob
-    draw.ellipse((bx - 30, y - 7, bx + 30, y + 13), fill=(154, 165, 177, 255))
-    draw.ellipse((bx - 30, y - 7, bx + 30, y + 13), outline=(110, 118, 129, 255), width=2)
-    draw.ellipse((bx - 26, y + 4, bx + 26, y + 14), fill=(57, 63, 74, 255))
-
-    # Luzes piscando
-    blink = 1 if (frame_i // 4) % 2 == 0 else -1
-    light_colors = [(255, 123, 114), (63, 185, 80), (123, 140, 255)]
-    for i, cx in enumerate((-20, 0, 20)):
-        color = light_colors[i] if blink > 0 else light_colors[-1 - i]
-        draw.ellipse((bx + cx - 3, y + 9, bx + cx + 3, y + 15), fill=color + (255,))
-
-    # Cúpula translúcida + alien no interior
-    odraw.ellipse((bx - 13, y - 22, bx + 13, y - 2), fill=(121, 192, 255, 170))
-    odraw.ellipse((bx - 6, y - 19, bx + 6, y - 9), fill=(17, 45, 42, 220))
-    odraw.ellipse((bx - 3, y - 16, bx - 1, y - 13), fill=(80, 255, 220, 230))
-    odraw.ellipse((bx + 1, y - 16, bx + 3, y - 13), fill=(80, 255, 220, 230))
-    odraw.ellipse((bx - 8, y - 20, bx + 2, y - 15), fill=(255, 255, 255, 110))
-
-    # Rastro de faíscas
-    rng = random.Random(frame_i)
-    for i, dist in enumerate((16, 34, 52, 72)):
-        tx = bx - dist
-        ty = y + rng.randint(-4, 10)
-        alpha = int((math.sin(frame_i * 0.7 + i * 1.7) + 1) / 2 * 160)
-        radius = 1 + (i % 2)
-        odraw.ellipse((tx - radius, ty - radius, tx + radius, ty + radius),
-                      fill=STAR + (alpha,))
+def flat_levels(counts: list[list[int]]) -> list[int]:
+    return [counts[w][d] for w in range(WEEKS) for d in range(DAYS)]
 
 
-def draw_beam(overlay: Image.Image, bx: float, ufo_y: float, frame_i: int) -> None:
+def draw_grid(draw: ImageDraw.ImageDraw, levels: list[int],
+              centers: list[tuple[float, float]],
+              pvals: list[float]) -> None:
+    for (cx, cy), level, p in zip(centers, levels, pvals):
+        gx = cx - CELL / 2
+        gy = cy - CELL / 2
+        full = LEVELS[level] if level > 0 else EMPTY_CELL
+        if p > 0.6:
+            t = min(1.0, (p - 0.6) / 0.4)
+            full = _lerp(full, EMPTY_CELL, t)
+        draw.rectangle((gx, gy, gx + CELL - 1, gy + CELL - 1), fill=full)
+
+
+def consumption(cells: list[tuple[float, float]], bx: float,
+                outro: float) -> list[float]:
+    return [max(0.0, min(1.0, (bx - cx) / CONSUME)) * outro
+            for cx, _ in cells]
+
+
+def draw_vortex(overlay: Image.Image, levels: list[int],
+                centers: list[tuple[float, float]],
+                pvals: list[float]) -> None:
     draw = ImageDraw.Draw(overlay)
-    top_y = ufo_y + 12
-    bottom_y = GRID_TOP + 8
-    pulse = 0.85 + math.sin(frame_i * 0.5) * 0.15
-
-    draw.polygon(
-        [(bx - 9, top_y), (bx + 9, top_y),
-         (bx + BW, bottom_y), (bx - BW, bottom_y)],
-        fill=BEAM + (26,),
-    )
-    inner = BW * 0.55
-    draw.polygon(
-        [(bx - 5, top_y), (bx + 5, top_y),
-         (bx + inner, bottom_y), (bx - inner, bottom_y)],
-        fill=BEAM + (40,),
-    )
-    for scale, alpha in ((1.15, 20), (0.75, 38), (0.42, 60)):
-        r = BW * scale * pulse
-        draw.ellipse(
-            (bx - r, GRID_TOP - 4 - r, bx + r, GRID_TOP - 4 + r),
-            fill=BEAM + (alpha,),
-        )
-
-
-def draw_cells_effects(
-    overlay: Image.Image,
-    cells: list[tuple[float, float, int]],
-    bx: float,
-    outro: float,
-) -> None:
-    """Aplica brilho/abdução às células conforme o raio passa por elas."""
-    draw = ImageDraw.Draw(overlay)
-    for cx, cy, level in cells:
-        p = (bx - cx) / CONSUME
-        p = max(0.0, min(1.0, p)) * outro
-
-        ahead = (cx - bx) / CONSUME
-        if 0 < ahead <= 1:
-            q = 1 - ahead
-            size = CELL - 2
-            draw.rectangle(
-                (cx - size / 2, cy - size / 2, cx + size / 2, cy + size / 2),
-                fill=(255, 255, 255, int(q * 70)),
-            )
-
-        if p <= 0:
+    for (cx, cy), level, p in zip(centers, levels, pvals):
+        if p <= 0 or p >= 1:
             continue
-        color = LEVELS[level] if level > 0 else EMPTY_CELL
-        s = CELL * (1 - 0.4 * p)
-        oy = cy - p * 48
-        glow = 4 + p * 10
-        draw.ellipse(
-            (cx - glow, oy - glow, cx + glow, oy + glow),
-            fill=color + (int((1 - p) * 120),),
-        )
-        draw.rectangle(
-            (cx - s / 2, oy - s / 2, cx + s / 2, oy + s / 2),
-            fill=color + (int((1 - p) * 235),),
-        )
-        core = 2.5
-        draw.ellipse(
-            (cx - core, oy - core, cx + core, oy + core),
-            fill=(255, 255, 255, int((1 - p) * 200)),
-        )
+
+        dx = cx - BH_X
+        dy = cy - BH_Y
+        r0 = math.hypot(dx, dy)
+        if r0 <= EVENT_HORIZON:
+            continue
+        theta0 = math.atan2(dy, dx)
+
+        tt = p
+        r = r0 * (1 - tt ** 1.6)
+        if r <= 3:
+            continue
+        theta = theta0 + 4.6 * tt * tt
+        x = BH_X + r * math.cos(theta)
+        y = BH_Y + r * math.sin(theta)
+
+        # Estica na direção tangencial (spaghettification)
+        tx = -math.sin(theta)
+        ty = math.cos(theta)
+        length = CELL * (1 + 1.6 * tt)
+        width = max(1, round(CELL * (1 - 0.55 * tt)))
+
+        fade = max(0.0, min(1.0, (r - 4) / 9))
+        base = LEVELS[level] if level > 0 else (60, 90, 85)
+        color = _lerp(base, GOLD, min(1.0, tt * 1.25))
+        color = _lerp(color, (255, 245, 225), max(0.0, tt - 0.75))
+        alpha = int(255 * fade)
+
+        draw.line((x - tx * length / 2, y - ty * length / 2,
+                   x + tx * length / 2, y + ty * length / 2),
+                  fill=color + (alpha,), width=width)
+        core = 1.5 + 2.2 * tt
+        draw.ellipse((x - core, y - core, x + core, y + core),
+                     fill=(255, 255, 255, alpha))
+        glow = 4 + 5 * tt
+        draw.ellipse((x - glow, y - glow, x + glow, y + glow),
+                     fill=GOLD + (int(alpha * 0.28),))
 
 
 # --------------------------------------------------------------------------
 # Renderização do GIF
 # --------------------------------------------------------------------------
-def render(
-    counts: list[list[int]], output: str, preview: bool
-) -> None:
+def render(counts: list[list[int]], output: str, preview: bool) -> None:
     background = build_background()
     star_layer = build_star_layer()
+    nebula_layer = build_nebula_layer()
+    centers = cell_geometry()
+    levels = flat_levels(counts)
 
     consume_frames = math.ceil((WIDTH + 80) / STEP)
     total = consume_frames + OUTRO_FRAMES
     frames: list[Image.Image] = []
 
     for i in range(total):
-        base = background.copy()
-        base = Image.alpha_composite(base, star_layer)
-        draw = ImageDraw.Draw(base)
-        draw_panel(draw)
-        cells = draw_grid(draw, counts)
-
-        overlay = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
-
         if i < consume_frames:
             bx = -40 + i * STEP
         else:
             bx = -40 + consume_frames * STEP
-
-        if bx < WIDTH + 60:
-            ufo_y = 82
-            draw_ufo(base, overlay, bx, ufo_y, i)
-            draw_beam(overlay, bx, ufo_y, i)
-
         outro = min(1.0, max(0.0, 1.0 - (i - consume_frames) / OUTRO_FRAMES))
-        draw_cells_effects(overlay, cells, bx, outro)
+        pvals = consumption(centers, bx, outro)
+
+        base = background.copy()
+        base = Image.alpha_composite(base, nebula_layer)
+        base = Image.alpha_composite(base, star_layer)
+        draw = ImageDraw.Draw(base)
+        draw_panel(draw)
+        draw_grid(draw, levels, centers, pvals)
+
+        overlay = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
+        draw_black_hole(overlay, i)
+        draw_front(overlay, bx)
+        draw_vortex(overlay, levels, centers, pvals)
 
         frame = Image.alpha_composite(base, overlay).convert("RGB")
-        frames.append(frame)
+        frames.append(frame.quantize(colors=128, method=Image.FASTOCTREE))
 
     if preview and frames:
         frames[0].save(output.replace(".gif", ".png"))
@@ -379,16 +410,6 @@ def render(
 # --------------------------------------------------------------------------
 # Entrada
 # --------------------------------------------------------------------------
-def build_counts(days: list[tuple[str, int]]) -> list[list[int]]:
-    counts = [[0] * DAYS for _ in range(WEEKS)]
-    for week_idx in range(WEEKS):
-        for day_idx in range(DAYS):
-            pos = week_idx * DAYS + day_idx
-            if pos < len(days):
-                counts[week_idx][day_idx] = level_for(days[pos][1])
-    return counts
-
-
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--mock", action="store_true",

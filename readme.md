@@ -29,7 +29,7 @@
 
 <div align="center">
   <img src="imgs/contribution-animation.gif" alt="Grid de contribuições" width="718" />
-  <p><em>meus commits abduzidos por um OVNI</em></p>
+  <p><em>meus commits espiralando para dentro do buraco negro</em></p>
 </div>
 
 ---
