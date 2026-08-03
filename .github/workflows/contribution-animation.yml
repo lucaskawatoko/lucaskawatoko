@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
     paths:
-      - "scripts/**"
       - "readme.md"
       - ".github/workflows/contribution-animation.yml"
   schedule:
@@ -21,22 +20,15 @@ concurrency:
 jobs:
   generate:
     runs-on: ubuntu-latest
-    env:
-      GH_USER: ${{ vars.GH_USER || github.repository_owner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configurar Python
-        uses: actions/setup-python@v5
+      - name: Gerar animação (Asteroids com seus repositórios)
+        uses: lucaskawatoko/git-maker/.github/actions/generate-gifs@main
         with:
-          python-version: "3.12"
-
-      - name: Instalar dependências
-        run: pip install pillow
-
-      - name: Gerar animação
-        run: python scripts/generate_contribution_animation.py
+          username: ${{ vars.GH_USER || github.repository_owner }}
+          output: imgs/contribution-animation.gif
 
       - name: Commitar GIF atualizado
         run: |

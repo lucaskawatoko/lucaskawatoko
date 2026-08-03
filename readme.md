@@ -28,7 +28,7 @@
 ## Atividade
 
 <div align="center">
-  <img src="imgs/contribution-animation.gif?v=6" alt="Grid de contribuições" width="700" />
+  <img src="imgs/contribution-animation.gif?v=7" alt="Asteroids: repositórios públicos virando cometas" width="700" />
   <p><em>asteroids: meus repositórios públicos viraram cometas vindo pra cima da nave</em></p>
 </div>
 
@@ -78,16 +78,48 @@
 
 ## Usar no seu perfil
 
-Este GIF é gerado automaticamente pela GitHub Actions com os dados do **seu** usuário: cada repositório público vira um cometa (os maiores viram cometas maiores) e o score conta os que foram destruídos.
+Este GIF é gerado automaticamente pela GitHub Actions com os dados do **seu** usuário: cada repositório público vira um cometa (os maiores viram cometas maiores, um por vez) e o score conta os que foram destruídos.
 
-1. Faça um **fork** deste repositório.
-2. *(Opcional)* Em **Settings → Secrets and variables → Actions → Variables**, crie `GH_USER` com seu nome de usuário. Sem isso, o dono do repositório é usado automaticamente.
-3. No seu repositório de perfil (`usuario/usuario`), adicione:
+1. No seu repositório de perfil (`usuario/usuario`), crie `.github/workflows/contribution-gif.yml`:
+
+   ```yaml
+   name: contribution-gif
+
+   on:
+     push:
+       branches: [main]
+     schedule:
+       - cron: "0 0 * * *"
+
+   permissions:
+     contents: write
+
+   jobs:
+     gif:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v4
+
+         - name: Generate GIF
+           uses: lucaskawatoko/git-maker/.github/actions/generate-gifs@main
+           with:
+             username: "seu-usuario"
+
+         - name: Commit
+           run: |
+             git config user.name "github-actions[bot]"
+             git config user.email "github-actions[bot]@users.noreply.github.com"
+             git add imgs/contribution-animation.gif
+             git diff --cached --quiet || git commit -m "chore: atualiza gif de contribuição"
+             git push
+   ```
+
+2. Adicione no seu `readme.md`:
 
    ```md
    <img src="imgs/contribution-animation.gif" alt="Contribuições" width="700" />
    ```
 
-4. A animação é atualizada a cada push e diariamente (cron `17 3 * * *`). Para gerar na hora, rode manualmente em **Actions → Gerar animação de contribuições → Run workflow**.
+3. A animação é atualizada a cada push e diariamente. Para gerar na hora, rode manualmente em **Actions → Gerar animação de contribuições → Run workflow**.
 
-> Os cometas são seus **repositórios públicos** — repositórios privados não aparecem.
+> Os cometas são seus **repositórios públicos** — repositórios privados não aparecem. A action é mantida no repositório [lucaskawatoko/git-maker](https://github.com/lucaskawatoko/git-maker).
