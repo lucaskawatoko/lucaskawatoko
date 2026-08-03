@@ -28,8 +28,8 @@
 ## Atividade
 
 <div align="center">
-  <img src="imgs/contribution-animation.gif?v=3" alt="Grid de contribuições" width="740" />
-  <p><em>meus commits viraram cometas num arcade espacial dos anos 90</em></p>
+  <img src="imgs/contribution-animation.gif?v=4" alt="Grid de contribuições" width="700" />
+  <p><em>asteroids: a nave no centro e meus commits viraram cometas vindo pra cima dela</em></p>
 </div>
 
 ---

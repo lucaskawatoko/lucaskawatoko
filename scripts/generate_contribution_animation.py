@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Gera a animação arcade "COMMIT ATTACK" para o README do perfil.
+"""Gera a animação "ASTRO COMMITS" para o README do perfil.
 
-Estilo jogo de nave espacial dos anos 90: cada commit do grid de
-contribuições vira um cometa-alvo e a nave atira neles um a um, com
-explosões pixeladas e placa de SCORE contando os commits destruídos.
+Estilo Asteroids dos anos 90: uma nave fica no centro da arena enquanto os
+commits do grid de contribuições viram cometas que convergem pra cima dela.
+A nave gira, atira com laser e explode cada cometa, com placa de SCORE
+somando as contribuições reais destruídas.
 
 Uso:
     python scripts/generate_contribution_animation.py [--mock] [--output PATH]
@@ -28,29 +29,24 @@ USERNAME = "lucaskawatoko"
 DEFAULT_OUTPUT = "imgs/contribution-animation.gif"
 
 # --------------------------------------------------------------------------
-# Layout do cenário (tela do arcade)
+# Cenário (arena espacial)
 # --------------------------------------------------------------------------
-CELL = 7
-GAP = 2
 WEEKS = 53
 DAYS = 7
 
-GRID_W = WEEKS * CELL + (WEEKS - 1) * GAP
-GRID_H = DAYS * CELL + (DAYS - 1) * GAP
-WIDTH = 740
-HEIGHT = 360
-GRID_X = 235
-GRID_Y = 149
-SHIP_X = 90
-SHIP_Y = 180
+WIDTH = 700
+HEIGHT = 420
+CX = WIDTH // 2
+CY = HEIGHT // 2
 
-FPS = 24
-INTRO = 24       # frames da nave entrando em cena
-FIRING = 88      # frames de tiroteio (destruição bloco a bloco)
-OUTRO = 20       # frames finais (fade + reinício)
+R0 = 196           # raio em que os cometas nascem (borda da arena)
+RH_BASE = 64       # raio mínimo de destruição (perto da nave)
+TRAVEL = 20        # frames que cada cometa leva da borda até o impacto
 EXPLOSION_MS = 12  # frames de duração de cada explosão
 
-TOTAL = INTRO + FIRING + OUTRO
+FPS = 24
+INTRO = 18       # frames de título
+OUTRO = 14       # frames finais (fade + reinício)
 
 # --------------------------------------------------------------------------
 # Paleta retrô
@@ -168,19 +164,19 @@ def load_font(size: int) -> ImageFont.ImageFont:
 
 
 # --------------------------------------------------------------------------
-# Cenário estático: fundo + linhas de grade retrô + estrelas + scanlines
+# Cenário estático: espaço + estrelas + grade tênue + scanlines
 # --------------------------------------------------------------------------
 def build_background() -> Image.Image:
     img = Image.new("RGBA", (WIDTH, HEIGHT), BG + (255,))
     draw = ImageDraw.Draw(img)
 
     for x in range(0, WIDTH, 28):
-        draw.line([(x, 0), (x, HEIGHT)], fill=GRID_LINE + (90,), width=1)
+        draw.line([(x, 0), (x, HEIGHT)], fill=GRID_LINE + (70,), width=1)
     for y in range(0, HEIGHT, 28):
-        draw.line([(0, y), (WIDTH, y)], fill=GRID_LINE + (90,), width=1)
+        draw.line([(0, y), (WIDTH, y)], fill=GRID_LINE + (70,), width=1)
 
     rng = random.Random(11)
-    for _ in range(90):
+    for _ in range(110):
         x = rng.randint(0, WIDTH - 1)
         y = rng.randint(0, HEIGHT - 1)
         alpha = rng.randint(30, 150)
@@ -193,110 +189,90 @@ def build_background() -> Image.Image:
     return img
 
 
-def draw_panel(draw: ImageDraw.ImageDraw) -> None:
-    draw.rounded_rectangle(
-        (GRID_X - 6, GRID_Y - 6, GRID_X + GRID_W + 6, GRID_Y + GRID_H + 6),
-        radius=4, outline=CYAN + (120,), width=1,
-    )
-
-
-def cell_geometry() -> list[tuple[float, float]]:
-    centers: list[tuple[float, float]] = []
-    for w in range(WEEKS):
-        for d in range(DAYS):
-            gx = GRID_X + w * (CELL + GAP) + CELL / 2
-            gy = GRID_Y + d * (CELL + GAP) + CELL / 2
-            centers.append((gx, gy))
-    return centers
-
-
-def draw_grid(draw: ImageDraw.ImageDraw,
-              centers: list[tuple[float, float]],
-              cells: list[tuple[int, int]],
-              destroyed: set[int]) -> None:
-    for idx, (cx, cy) in enumerate(centers):
-        level, _ = cells[idx]
-        gx = cx - CELL / 2
-        gy = cy - CELL / 2
-        if level == 0:
-            draw.rectangle((gx, gy, gx + CELL - 1, gy + CELL - 1),
-                           fill=EMPTY_CELL)
-        elif idx in destroyed:
-            draw.rectangle((gx, gy, gx + CELL - 1, gy + CELL - 1),
-                           fill=EMPTY_CELL)
-        else:
-            draw.rectangle((gx, gy, gx + CELL - 1, gy + CELL - 1),
-                           fill=LEVELS[level])
-
-
-def draw_cell_glow(overlay: Image.Image,
-                   centers: list[tuple[float, float]],
-                   cells: list[tuple[int, int]],
-                   destroyed: set[int]) -> None:
-    draw = ImageDraw.Draw(overlay)
-    for idx, (cx, cy) in enumerate(centers):
-        level, _ = cells[idx]
-        if level == 0 or idx in destroyed:
-            continue
-        r = CELL + 2
-        draw.rectangle((cx - r, cy - r, cx + r, cy + r),
-                       fill=LEVELS[level] + (38,))
-
-
 # --------------------------------------------------------------------------
-# Nave espacial
+# Nave ao centro (Asteroids)
 # --------------------------------------------------------------------------
-def draw_ship(draw: ImageDraw.ImageDraw, frame_i: int) -> tuple[float, float]:
-    bob = math.sin(frame_i * 0.4) * 3
-    yy = SHIP_Y + bob
-    x = SHIP_X
-    draw.polygon([(x + 30, yy), (x + 8, yy + 9), (x - 18, yy + 9),
-                  (x - 18, yy - 9), (x + 8, yy - 9)],
-                 fill=(13, 22, 44), outline=CYAN)
-    draw.polygon([(x + 8, yy - 9), (x - 8, yy - 22), (x - 6, yy - 8)],
-                 fill=CYAN)
-    draw.polygon([(x + 8, yy + 9), (x - 8, yy + 22), (x - 6, yy + 8)],
-                 fill=CYAN)
-    draw.ellipse((x + 2, yy - 3, x + 12, yy + 3), fill=(80, 255, 220))
-    flame = 12 + 5 * math.sin(frame_i * 0.8)
-    draw.polygon([(x - 18, yy - 4), (x - 18, yy + 4), (x - 18 - flame, yy)],
+def ship_points(cx: float, cy: float, ang: float) -> tuple[tuple, tuple, tuple, tuple]:
+    nose = (cx + 22 * math.cos(ang), cy + 22 * math.sin(ang))
+    bl = (cx + 14 * math.cos(ang + 2.45), cy + 14 * math.sin(ang + 2.45))
+    br = (cx + 14 * math.cos(ang - 2.45), cy + 14 * math.sin(ang - 2.45))
+    rear = (cx + 6 * math.cos(ang + math.pi), cy + 6 * math.sin(ang + math.pi))
+    return nose, bl, rear, br
+
+
+def draw_ship(draw: ImageDraw.ImageDraw, ang: float, i: int) -> tuple[float, float]:
+    nose, bl, rear, br = ship_points(CX, CY, ang)
+    draw.polygon([nose, bl, rear, br], fill=(13, 22, 44), outline=CYAN)
+    cockpit = (CX + 10 * math.cos(ang), CY + 10 * math.sin(ang))
+    draw.ellipse((cockpit[0] - 2, cockpit[1] - 2, cockpit[0] + 2, cockpit[1] + 2),
+                 fill=(80, 255, 220))
+    flame = 8 + 4 * math.sin(i * 0.9)
+    fx, fy = -math.cos(ang), -math.sin(ang)
+    px, py = -fy, fx
+    tip = (rear[0] + fx * flame, rear[1] + fy * flame)
+    draw.polygon([rear,
+                  (rear[0] + px * 3, rear[1] + py * 3),
+                  tip,
+                  (rear[0] - px * 3, rear[1] - py * 3)],
                  fill=ORANGE)
-    return x + 30, yy  # ponta da nave
+    return nose
 
 
-def draw_beam(overlay: Image.Image, nose: tuple[float, float],
-              target: tuple[float, float], frame_i: int) -> None:
+# --------------------------------------------------------------------------
+# Cometa (núcleo + cauda apontando pra fora)
+# --------------------------------------------------------------------------
+def draw_comet(overlay: Image.Image, cx: float, cy: float,
+               theta: float, level: int) -> None:
     draw = ImageDraw.Draw(overlay)
-    x0, y0 = nose
-    x1, y1 = target
-    draw.line((x0, y0, x1, y1), fill=CYAN + (60,), width=5)
-    draw.line((x0, y0, x1, y1), fill=(255, 255, 255, 200), width=2)
-    draw.line((x0, y0, x1, y1), fill=CYAN + (255,), width=1)
-    # clarão no cano da nave
-    draw.ellipse((x0 - 4, y0 - 4, x0 + 4, y0 + 4),
-                 fill=(255, 255, 255, 220))
+    tail = 8 + 4 * level
+    for seg in range(3):
+        a0, a1 = 0.25 * seg, 0.25 * (seg + 1)
+        x0 = cx + math.cos(theta) * tail * a0
+        y0 = cy + math.sin(theta) * tail * a0
+        x1 = cx + math.cos(theta) * tail * a1
+        y1 = cy + math.sin(theta) * tail * a1
+        alpha = int(150 * (1 - seg * 0.28))
+        draw.line((x0, y0, x1, y1), fill=LEVELS[level] + (alpha,), width=1)
+    draw.ellipse((cx - 2, cy - 2, cx + 2, cy + 2), fill=(255, 255, 255, 230))
+    draw.ellipse((cx - 3, cy - 3, cx + 3, cy + 3),
+                 outline=LEVELS[level] + (170,))
+
+
+# --------------------------------------------------------------------------
+# Laser (bolinha de energia que viaja até o alvo)
+# --------------------------------------------------------------------------
+def draw_laser(overlay: Image.Image, nose: tuple[float, float],
+               target: tuple[float, float], p: float) -> None:
+    draw = ImageDraw.Draw(overlay)
+    hx = nose[0] + (target[0] - nose[0]) * p
+    hy = nose[1] + (target[1] - nose[1]) * p
+    dx, dy = target[0] - nose[0], target[1] - nose[1]
+    d = math.hypot(dx, dy) or 1
+    ux, uy = dx / d, dy / d
+    bx, by = hx - ux * 10, hy - uy * 10
+    draw.line((bx, by, hx, hy), fill=CYAN + (220,), width=1)
+    draw.ellipse((hx - 2, hy - 2, hx + 2, hy + 2), fill=(255, 255, 255, 240))
 
 
 # --------------------------------------------------------------------------
 # Explosão pixelada
 # --------------------------------------------------------------------------
-def draw_explosion(overlay: Image.Image, cell_idx: int,
-                   center: tuple[float, float], level: int, age: float,
-                   cell_count: int) -> None:
+def draw_explosion(overlay: Image.Image, pos: tuple[float, float],
+                   level: int, age: float, seed: int) -> None:
     draw = ImageDraw.Draw(overlay)
     t = min(1.0, age / EXPLOSION_MS)
-    cx, cy = center
-    r = 2 + 9 * t
+    cx, cy = pos
+    r = 2 + 7 * t
     draw.ellipse((cx - r, cy - r, cx + r, cy + r),
                  fill=(255, 255, 255, int(190 * (1 - t))))
-    for k in range(8):
-        angle = (cell_idx * 2.399 + k * 2.513) % (2 * math.pi)
-        dist = 2 + 15 * t
+    for k in range(7):
+        angle = seed * 2.399 + k * 2.399
+        dist = 3 + 13 * t
         px = cx + math.cos(angle) * dist
         py = cy + math.sin(angle) * dist
         color = LEVELS[level] if k % 3 else ORANGE
-        alpha = int(240 * (1 - t))
-        size = 2
+        size = 2 if k % 2 else 1
+        alpha = int(220 * (1 - t))
         draw.rectangle((px - size, py - size, px + size, py + size),
                        fill=color + (alpha,))
 
@@ -309,17 +285,56 @@ def draw_hud(frame: Image.Image, score: int, i: int, font_s: ImageFont.ImageFont
     draw = ImageDraw.Draw(frame)
     draw.text((24, 16), "SCORE", font=font_s, fill=(150, 160, 180, 255))
     draw.text((24, 38), f"{score:05d}", font=font_l, fill=GREEN + (255,))
-    draw.text((24, 78), f"COMMITS: {score}", font=font_s,
+    draw.text((24, 78), f"CONTRIB: {score}", font=font_s,
               fill=(150, 160, 180, 255))
     if i < INTRO:
-        title = "COMMIT ATTACK"
+        title = "ASTRO COMMITS"
         tw = draw.textlength(title, font=font_l)
-        draw.text(((WIDTH - tw) / 2, 18), title, font=font_l,
+        draw.text(((WIDTH - tw) / 2, 16), title, font=font_l,
                   fill=YELLOW + (255,))
-        sub = "desvie dos cometas!"
+        sub = "os commits vêm pra cima de você!"
         sw = draw.textlength(sub, font=font_s)
-        draw.text(((WIDTH - sw) / 2, 48), sub, font=font_s,
+        draw.text(((WIDTH - sw) / 2, 46), sub, font=font_s,
                   fill=CYAN + (200,))
+
+
+# --------------------------------------------------------------------------
+# Preparação dos cometas (ordem dos dias de contribuição)
+# --------------------------------------------------------------------------
+def build_comets(counts: list[tuple[int, int]]) -> list[dict]:
+    rng = random.Random(7)
+    comets: list[dict] = []
+    cell_idx = 0
+    for level, count in counts:
+        if level <= 0:
+            cell_idx += 1
+            continue
+        theta = rng.uniform(0, 2 * math.pi)
+        rh = RH_BASE + (cell_idx % 5) * 13
+        comets.append({
+            "idx": cell_idx,
+            "theta": theta,
+            "level": level,
+            "count": count,
+            "ts": INTRO + len(comets),
+            "rh": rh,
+            "speed": (R0 - rh) / TRAVEL,
+            "hit_pos": (CX + math.cos(theta) * rh,
+                        CY + math.sin(theta) * rh),
+        })
+        cell_idx += 1
+    return comets
+
+
+def comet_pos(comet: dict, i: float) -> tuple[float, float]:
+    r = R0 - comet["speed"] * i
+    return (CX + math.cos(comet["theta"]) * r,
+            CY + math.sin(comet["theta"]) * r)
+
+
+def closest_angle(cur: float, target: float) -> float:
+    d = (target - cur + math.pi) % (2 * math.pi) - math.pi
+    return d
 
 
 # --------------------------------------------------------------------------
@@ -327,73 +342,64 @@ def draw_hud(frame: Image.Image, score: int, i: int, font_s: ImageFont.ImageFont
 # --------------------------------------------------------------------------
 def render(counts: list[tuple[int, int]], output: str, preview: bool) -> None:
     background = build_background()
-    centers = cell_geometry()
-    active: list[dict] = []
-    for idx, (level, count) in enumerate(counts):
-        if level > 0:
-            active.append({
-                "idx": idx,
-                "center": centers[idx],
-                "level": level,
-                "count": count,
-            })
-    n_active = len(active)
+    comets = build_comets(counts)
+    n_active = len(comets)
+    FIRING = max(1, n_active)
+    TOTAL = INTRO + FIRING + TRAVEL + EXPLOSION_MS + OUTRO
+
     font_s = load_font(14)
     font_l = load_font(20)
     frames: list[Image.Image] = []
 
+    cur_angle = -math.pi / 2
     for i in range(TOTAL):
         frame = background.copy()
+        overlay = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
 
-        if i < INTRO:
-            n_hit = 0
-            destroyed: set[int] = set()
-            target: dict | None = None
-        elif i < INTRO + FIRING:
-            p = (i - INTRO) / FIRING
-            n_hit = min(n_active, round(p * n_active))
-            destroyed = {a["idx"] for a in active[:n_hit]}
-            target = active[min(n_hit, n_active - 1)] if n_hit < n_active else None
+        # alvo: primeiro cometa vivo (menor ts => será atingido primeiro)
+        target = None
+        for c in comets:
+            t = i - c["ts"]
+            if 0 <= t < TRAVEL:
+                target = c
+                break
+
+        # rotação da nave
+        if target is not None:
+            tx, ty = comet_pos(target, i - target["ts"])
+            wanted = math.atan2(ty - CY, tx - CX)
+            d = closest_angle(cur_angle, wanted)
+            cur_angle += d * 0.30
+            if abs(d) < 0.05:
+                cur_angle = wanted
         else:
-            n_hit = n_active
-            destroyed = {a["idx"] for a in active}
-            target = None
+            cur_angle += 0.015
 
         draw = ImageDraw.Draw(frame)
-        draw_panel(draw)
-        draw_grid(draw, centers, counts, destroyed)
+        nose = draw_ship(draw, cur_angle, i)
 
-        overlay = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
-        draw_cell_glow(overlay, centers, counts, destroyed)
+        for c in comets:
+            t = i - c["ts"]
+            if 0 <= t < TRAVEL:
+                px, py = comet_pos(c, t)
+                draw_comet(overlay, px, py, c["theta"], c["level"])
+            elif TRAVEL <= t < TRAVEL + EXPLOSION_MS:
+                draw_explosion(overlay, c["hit_pos"], c["level"],
+                               t - TRAVEL, c["idx"])
 
-        nose = draw_ship(draw, i)
         if target is not None:
-            draw_beam(overlay, nose, target["center"], i)
+            p = (i - target["ts"]) / TRAVEL
+            draw_laser(overlay, nose, comet_pos(target, i - target["ts"]), p)
 
-        # Explosões (continuam no OUTRO até terminarem)
-        if i >= INTRO:
-            for k, a in enumerate(active):
-                age = (i - INTRO) - k * (FIRING / n_active)
-                if 0 <= age < EXPLOSION_MS:
-                    draw_explosion(overlay, a["idx"], a["center"],
-                                   a["level"], age, n_active)
-
-        # Placa de score
-        score = 0
-        if i >= INTRO:
-            for k, a in enumerate(active):
-                age = (i - INTRO) - k * (FIRING / n_active)
-                if age >= EXPLOSION_MS:
-                    score += a["count"]
+        score = sum(c["count"] for c in comets if (i - c["ts"]) >= TRAVEL)
         draw_hud(frame, score, i, font_s, font_l)
 
         frame = Image.alpha_composite(frame, overlay).convert("RGB")
 
-        # Fade de reinício no OUTRO
-        if i >= INTRO + FIRING:
-            t = (i - INTRO - FIRING) / OUTRO
+        if i >= TOTAL - OUTRO:
+            t = (i - (TOTAL - OUTRO)) / OUTRO
             black = Image.new("RGB", (WIDTH, HEIGHT), (0, 0, 0))
-            frame = Image.blend(frame, black, min(1.0, t * 1.1))
+            frame = Image.blend(frame, black, min(1.0, t * 1.05))
 
         frames.append(frame)
 
