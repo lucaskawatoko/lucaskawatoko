@@ -28,7 +28,7 @@
 ## Atividade
 
 <div align="center">
-  <img src="imgs/contribution-animation.gif?v=4" alt="Grid de contribuições" width="700" />
+  <img src="imgs/contribution-animation.gif?v=5" alt="Grid de contribuições" width="700" />
   <p><em>asteroids: a nave no centro e meus commits viraram cometas vindo pra cima dela</em></p>
 </div>
 
@@ -73,3 +73,21 @@
 <div align="center">
   <sub>Lucas Kawatoko · São Paulo, Brasil</sub>
 </div>
+
+---
+
+## Usar no seu perfil
+
+Este GIF é gerado automaticamente pela GitHub Actions com os dados do **seu** usuário (contribuições públicas + total de repositórios públicos).
+
+1. Faça um **fork** deste repositório.
+2. *(Opcional)* Em **Settings → Secrets and variables → Actions → Variables**, crie `GH_USER` com seu nome de usuário. Sem isso, o dono do repositório é usado automaticamente.
+3. No seu repositório de perfil (`usuario/usuario`), adicione:
+
+   ```md
+   <img src="imgs/contribution-animation.gif" alt="Contribuições" width="700" />
+   ```
+
+4. A animação é atualizada a cada push e diariamente (cron `17 3 * * *`). Para gerar na hora, rode manualmente em **Actions → Gerar animação de contribuições → Run workflow**.
+
+> A contagem considera apenas **contribuições públicas** — o token do Actions não enxerga contribuições privadas.

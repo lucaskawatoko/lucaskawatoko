@@ -4,10 +4,14 @@
 Estilo Asteroids dos anos 90: uma nave fica no centro da arena enquanto os
 commits do grid de contribuições viram cometas que convergem pra cima dela.
 A nave gira, atira com laser e explode cada cometa, com placa de SCORE
-somando as contribuições reais destruídas.
+somando as contribuições reais destruídas e o total de repositórios públicos.
+
+Qualquer usuário pode usar: o nome é resolvido via --username, env GH_USER
+ou o padrão deste repositório. O GITHUB_TOKEN da Actions enxerga apenas
+contribuições públicas.
 
 Uso:
-    python scripts/generate_contribution_animation.py [--mock] [--output PATH]
+    python scripts/generate_contribution_animation.py [--mock] [--output PATH] [--username USUARIO]
 
 Requer Pillow. Para dados reais usa GH_TOKEN/GITHUB_TOKEN (GraphQL).
 Sem token, gera dados fictícios (útil só para pré-visualizar localmente).
@@ -26,6 +30,7 @@ from urllib.request import Request, urlopen
 from PIL import Image, ImageDraw, ImageFont
 
 USERNAME = "lucaskawatoko"
+MOCK_REPOS = 15
 DEFAULT_OUTPUT = "imgs/contribution-animation.gif"
 
 # --------------------------------------------------------------------------
@@ -70,7 +75,7 @@ STAR = (210, 224, 240)
 # --------------------------------------------------------------------------
 # Busca de contribuições via GitHub GraphQL
 # --------------------------------------------------------------------------
-def fetch_contributions(token: str) -> list[tuple[str, int]]:
+def fetch_contributions(token: str, login: str) -> tuple[list[tuple[str, int]], int]:
     query = """
     query($login: String!) {
       user(login: $login) {
@@ -84,10 +89,13 @@ def fetch_contributions(token: str) -> list[tuple[str, int]]:
             }
           }
         }
+        repositories(privacy: PUBLIC, affiliations: OWNER, first: 1) {
+          totalCount
+        }
       }
     }
     """
-    payload = json.dumps({"query": query, "variables": {"login": USERNAME}}).encode()
+    payload = json.dumps({"query": query, "variables": {"login": login}}).encode()
     req = Request(
         "https://api.github.com/graphql",
         data=payload,
@@ -106,12 +114,14 @@ def fetch_contributions(token: str) -> list[tuple[str, int]]:
     if "errors" in data:
         raise SystemExit(f"Erro da API GraphQL: {data['errors']}")
 
-    calendar = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]
+    user = data["data"]["user"]
+    calendar = user["contributionsCollection"]["contributionCalendar"]
     days: list[tuple[str, int]] = []
     for week in calendar["weeks"]:
         for day in week["contributionDays"]:
             days.append((day["date"], int(day["contributionCount"])))
-    return days
+    public_repos = int(user["repositories"]["totalCount"])
+    return days, public_repos
 
 
 def mock_contributions() -> list[tuple[str, int]]:
@@ -280,12 +290,14 @@ def draw_explosion(overlay: Image.Image, pos: tuple[float, float],
 # --------------------------------------------------------------------------
 # Placas de texto
 # --------------------------------------------------------------------------
-def draw_hud(frame: Image.Image, score: int, i: int, font_s: ImageFont.ImageFont,
-             font_l: ImageFont.ImageFont) -> None:
+def draw_hud(frame: Image.Image, score: int, public_repos: int, i: int,
+             font_s: ImageFont.ImageFont, font_l: ImageFont.ImageFont) -> None:
     draw = ImageDraw.Draw(frame)
     draw.text((24, 16), "SCORE", font=font_s, fill=(150, 160, 180, 255))
     draw.text((24, 38), f"{score:05d}", font=font_l, fill=GREEN + (255,))
     draw.text((24, 78), f"CONTRIB: {score}", font=font_s,
+              fill=(150, 160, 180, 255))
+    draw.text((24, 98), f"REPOS: {public_repos}", font=font_s,
               fill=(150, 160, 180, 255))
     if i < INTRO:
         title = "ASTRO COMMITS"
@@ -340,7 +352,8 @@ def closest_angle(cur: float, target: float) -> float:
 # --------------------------------------------------------------------------
 # Renderização do GIF
 # --------------------------------------------------------------------------
-def render(counts: list[tuple[int, int]], output: str, preview: bool) -> None:
+def render(counts: list[tuple[int, int]], public_repos: int,
+           output: str, preview: bool) -> None:
     background = build_background()
     comets = build_comets(counts)
     n_active = len(comets)
@@ -392,7 +405,7 @@ def render(counts: list[tuple[int, int]], output: str, preview: bool) -> None:
             draw_laser(overlay, nose, comet_pos(target, i - target["ts"]), p)
 
         score = sum(c["count"] for c in comets if (i - c["ts"]) >= TRAVEL)
-        draw_hud(frame, score, i, font_s, font_l)
+        draw_hud(frame, score, public_repos, i, font_s, font_l)
 
         frame = Image.alpha_composite(frame, overlay).convert("RGB")
 
@@ -425,24 +438,29 @@ def main() -> None:
     parser.add_argument("--mock", action="store_true",
                         help="usa dados fictícios em vez da API")
     parser.add_argument("--output", default=DEFAULT_OUTPUT)
+    parser.add_argument("--username", default=None,
+                        help="usuário do GitHub (padrão: GH_USER ou lucaskawatoko)")
     parser.add_argument("--preview", action="store_true",
                         help="salva também um PNG do primeiro frame")
     args = parser.parse_args()
 
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    username = args.username or os.environ.get("GH_USER") or USERNAME
     if args.mock or not token:
         if not token:
             print("Aviso: sem GH_TOKEN/GITHUB_TOKEN. Usando dados fictícios (preview).",
                   file=sys.stderr)
         days = mock_contributions()
+        public_repos = MOCK_REPOS
     else:
-        days = fetch_contributions(token)
+        days, public_repos = fetch_contributions(token, username)
 
     counts = flat_cells(days)
     os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
-    render(counts, args.output, args.preview)
+    render(counts, public_repos, args.output, args.preview)
     size = os.path.getsize(args.output) / 1024
-    print(f"GIF gerado em {args.output} ({size:.0f} KB, {WIDTH}x{HEIGHT})")
+    print(f"GIF gerado em {args.output} ({size:.0f} KB, {WIDTH}x{HEIGHT})"
+          f" para @{username}")
 
 
 if __name__ == "__main__":

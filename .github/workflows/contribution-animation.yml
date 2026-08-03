@@ -21,6 +21,8 @@ concurrency:
 jobs:
   generate:
     runs-on: ubuntu-latest
+    env:
+      GH_USER: ${{ vars.GH_USER || github.repository_owner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
