@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Gera a animação "ASTRO COMMITS" para o README do perfil.
+"""Gera a animação "ASTRO REPOS" para o README do perfil.
 
 Estilo Asteroids dos anos 90: uma nave fica no centro da arena enquanto os
-commits do grid de contribuições viram cometas que convergem pra cima dela.
+repositórios públicos do usuário viram cometas que convergem pra cima dela.
 A nave gira, atira com laser e explode cada cometa, com placa de SCORE
-somando as contribuições reais destruídas e o total de repositórios públicos.
+contando os repositórios destruídos. Cometas maiores = repositórios maiores
+(tamanho em KB, por ranking) e o nome do alvo aparece no canto superior.
 
 Qualquer usuário pode usar: o nome é resolvido via --username, env GH_USER
-ou o padrão deste repositório. O GITHUB_TOKEN da Actions enxerga apenas
-contribuições públicas.
+ou o padrão deste repositório.
 
 Uso:
     python scripts/generate_contribution_animation.py [--mock] [--output PATH] [--username USUARIO]
@@ -30,15 +30,11 @@ from urllib.request import Request, urlopen
 from PIL import Image, ImageDraw, ImageFont
 
 USERNAME = "lucaskawatoko"
-MOCK_REPOS = 15
 DEFAULT_OUTPUT = "imgs/contribution-animation.gif"
 
 # --------------------------------------------------------------------------
 # Cenário (arena espacial)
 # --------------------------------------------------------------------------
-WEEKS = 53
-DAYS = 7
-
 WIDTH = 700
 HEIGHT = 420
 CX = WIDTH // 2
@@ -46,19 +42,20 @@ CY = HEIGHT // 2
 
 R0 = 196           # raio em que os cometas nascem (borda da arena)
 RH_BASE = 64       # raio mínimo de destruição (perto da nave)
-TRAVEL = 20        # frames que cada cometa leva da borda até o impacto
+TRAVEL = 40        # frames que cada cometa leva da borda até o impacto
 EXPLOSION_MS = 12  # frames de duração de cada explosão
 
 FPS = 24
-INTRO = 18       # frames de título
-OUTRO = 14       # frames finais (fade + reinício)
+INTRO = 18            # frames de título
+OUTRO = 14            # frames finais (fade + reinício)
+TARGET_TOTAL = 210    # duração alvo do loop em frames (~8,7s)
+FIRING_SPAN = TARGET_TOTAL - INTRO - OUTRO - TRAVEL - EXPLOSION_MS
 
 # --------------------------------------------------------------------------
 # Paleta retrô
 # --------------------------------------------------------------------------
 BG = (5, 8, 16)
 GRID_LINE = (24, 34, 56)
-EMPTY_CELL = (17, 22, 34)
 LEVELS = {
     1: (15, 100, 88),
     2: (21, 148, 122),
@@ -73,24 +70,19 @@ STAR = (210, 224, 240)
 
 
 # --------------------------------------------------------------------------
-# Busca de contribuições via GitHub GraphQL
+# Busca de repositórios públicos via GitHub GraphQL
 # --------------------------------------------------------------------------
-def fetch_contributions(token: str, login: str) -> tuple[list[tuple[str, int]], int]:
+def fetch_repos(token: str, login: str) -> list[dict]:
     query = """
     query($login: String!) {
       user(login: $login) {
-        contributionsCollection {
-          contributionCalendar {
-            weeks {
-              contributionDays {
-                date
-                contributionCount
-              }
-            }
-          }
-        }
-        repositories(privacy: PUBLIC, affiliations: OWNER, first: 1) {
+        repositories(privacy: PUBLIC, affiliations: OWNER, first: 100) {
           totalCount
+          nodes {
+            name
+            stargazerCount
+            diskUsage
+          }
         }
       }
     }
@@ -102,60 +94,49 @@ def fetch_contributions(token: str, login: str) -> tuple[list[tuple[str, int]], 
         headers={
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
-            "User-Agent": "contribution-animation",
+            "User-Agent": "astrogifs",
         },
     )
     try:
         with urlopen(req, timeout=30) as resp:
             data = json.load(resp)
     except Exception as exc:  # noqa: BLE001
-        raise SystemExit(f"Falha ao buscar contribuições via GraphQL: {exc}") from exc
+        raise SystemExit(f"Falha ao buscar repositórios via GraphQL: {exc}") from exc
 
     if "errors" in data:
         raise SystemExit(f"Erro da API GraphQL: {data['errors']}")
 
-    user = data["data"]["user"]
-    calendar = user["contributionsCollection"]["contributionCalendar"]
-    days: list[tuple[str, int]] = []
-    for week in calendar["weeks"]:
-        for day in week["contributionDays"]:
-            days.append((day["date"], int(day["contributionCount"])))
-    public_repos = int(user["repositories"]["totalCount"])
-    return days, public_repos
+    nodes = data["data"]["user"]["repositories"]["nodes"] or []
+    return rank_repos(nodes)
 
 
-def mock_contributions() -> list[tuple[str, int]]:
+def rank_repos(nodes: list[dict]) -> list[dict]:
+    """Ordena por tamanho (KB) e atribui nível 1-4 por ranking."""
+    repos = [{
+        "name": n["name"],
+        "stars": n["stargazerCount"] or 0,
+        "size": n["diskUsage"] or 0,
+    } for n in nodes]
+    repos.sort(key=lambda r: r["size"], reverse=True)
+    total = len(repos)
+    for i, repo in enumerate(repos):
+        repo["level"] = 1 + min(3, (i * 4) // max(1, total)) if total else 1
+    return repos
+
+
+def mock_repos() -> list[dict]:
+    names = [
+        "api-orders", "django-blog", "portfolio", "todo-api", "pomodoro-cli",
+        "infra-docs", "ml-notebooks", "ecommerce-api", "pixel-art", "dotfiles",
+        "web-scraper", "financas-cli", "imgs-utils", "nest-crm", "scripts",
+    ]
     rng = random.Random(42)
-    days: list[tuple[str, int]] = []
-    for _ in range(WEEKS * DAYS):
-        r = rng.random()
-        if r < 0.55:
-            count = 0
-        elif r < 0.8:
-            count = rng.randint(1, 3)
-        elif r < 0.95:
-            count = rng.randint(4, 9)
-        else:
-            count = rng.randint(10, 18)
-        days.append(("", count))
-    return days
-
-
-def level_for(count: int) -> int:
-    if count <= 0:
-        return 0
-    if count <= 3:
-        return 1
-    if count <= 7:
-        return 2
-    if count <= 13:
-        return 3
-    return 4
-
-
-def flat_cells(days: list[tuple[str, int]]) -> list[tuple[int, int]]:
-    """Retorna (level, contagem real) por célula, na ordem (w, d)."""
-    return [(level_for(count), count) for _, count in days]
+    repos = [{
+        "name": name,
+        "stargazerCount": rng.randint(0, 30),
+        "diskUsage": rng.randint(100, 40000),
+    } for name in names]
+    return rank_repos(repos)
 
 
 # --------------------------------------------------------------------------
@@ -229,23 +210,25 @@ def draw_ship(draw: ImageDraw.ImageDraw, ang: float, i: int) -> tuple[float, flo
 
 
 # --------------------------------------------------------------------------
-# Cometa (núcleo + cauda apontando pra fora)
+# Cometa (núcleo + cauda apontando pra fora; maior = repositório maior)
 # --------------------------------------------------------------------------
 def draw_comet(overlay: Image.Image, cx: float, cy: float,
                theta: float, level: int) -> None:
     draw = ImageDraw.Draw(overlay)
-    tail = 8 + 4 * level
-    for seg in range(3):
+    tail = 8 + 5 * level
+    for seg in range(4):
         a0, a1 = 0.25 * seg, 0.25 * (seg + 1)
         x0 = cx + math.cos(theta) * tail * a0
         y0 = cy + math.sin(theta) * tail * a0
         x1 = cx + math.cos(theta) * tail * a1
         y1 = cy + math.sin(theta) * tail * a1
-        alpha = int(150 * (1 - seg * 0.28))
+        alpha = int(150 * (1 - seg * 0.25))
         draw.line((x0, y0, x1, y1), fill=LEVELS[level] + (alpha,), width=1)
-    draw.ellipse((cx - 2, cy - 2, cx + 2, cy + 2), fill=(255, 255, 255, 230))
-    draw.ellipse((cx - 3, cy - 3, cx + 3, cy + 3),
+    r = 2 + level
+    draw.ellipse((cx - r, cy - r, cx + r, cy + r),
                  outline=LEVELS[level] + (170,))
+    draw.ellipse((cx - r + 1, cy - r + 1, cx + r - 1, cy + r - 1),
+                 fill=(255, 255, 255, 210))
 
 
 # --------------------------------------------------------------------------
@@ -272,12 +255,12 @@ def draw_explosion(overlay: Image.Image, pos: tuple[float, float],
     draw = ImageDraw.Draw(overlay)
     t = min(1.0, age / EXPLOSION_MS)
     cx, cy = pos
-    r = 2 + 7 * t
+    r = 2 + (6 + level) * t
     draw.ellipse((cx - r, cy - r, cx + r, cy + r),
                  fill=(255, 255, 255, int(190 * (1 - t))))
     for k in range(7):
         angle = seed * 2.399 + k * 2.399
-        dist = 3 + 13 * t
+        dist = 3 + (11 + level) * t
         px = cx + math.cos(angle) * dist
         py = cy + math.sin(angle) * dist
         color = LEVELS[level] if k % 3 else ORANGE
@@ -290,56 +273,56 @@ def draw_explosion(overlay: Image.Image, pos: tuple[float, float],
 # --------------------------------------------------------------------------
 # Placas de texto
 # --------------------------------------------------------------------------
-def draw_hud(frame: Image.Image, score: int, public_repos: int, i: int,
+def draw_hud(frame: Image.Image, score: int, total_repos: int,
+             target_name: str | None, i: int,
              font_s: ImageFont.ImageFont, font_l: ImageFont.ImageFont) -> None:
     draw = ImageDraw.Draw(frame)
     draw.text((24, 16), "SCORE", font=font_s, fill=(150, 160, 180, 255))
-    draw.text((24, 38), f"{score:05d}", font=font_l, fill=GREEN + (255,))
-    draw.text((24, 78), f"CONTRIB: {score}", font=font_s,
+    draw.text((24, 38), f"{score:03d}", font=font_l, fill=GREEN + (255,))
+    draw.text((24, 78), f"REPOS PÚBLICOS: {total_repos}", font=font_s,
               fill=(150, 160, 180, 255))
-    draw.text((24, 98), f"REPOS: {public_repos}", font=font_s,
-              fill=(150, 160, 180, 255))
+    if target_name:
+        tw = draw.textlength(target_name, font=font_s)
+        draw.text((WIDTH - 24 - tw, 16), target_name, font=font_s,
+                  fill=CYAN + (255,))
     if i < INTRO:
-        title = "ASTRO COMMITS"
+        title = "ASTRO REPOS"
         tw = draw.textlength(title, font=font_l)
         draw.text(((WIDTH - tw) / 2, 16), title, font=font_l,
                   fill=YELLOW + (255,))
-        sub = "os commits vêm pra cima de você!"
+        sub = "seus repositórios viraram cometas!"
         sw = draw.textlength(sub, font=font_s)
         draw.text(((WIDTH - sw) / 2, 46), sub, font=font_s,
                   fill=CYAN + (200,))
 
 
 # --------------------------------------------------------------------------
-# Preparação dos cometas (ordem dos dias de contribuição)
+# Preparação dos cometas (um por repositório público)
 # --------------------------------------------------------------------------
-def build_comets(counts: list[tuple[int, int]]) -> list[dict]:
+def build_comets(repos: list[dict]) -> list[dict]:
     rng = random.Random(7)
+    n = len(repos)
+    gap = max(1.0, FIRING_SPAN / max(1, n - 1)) if n > 1 else 0.0
     comets: list[dict] = []
-    cell_idx = 0
-    for level, count in counts:
-        if level <= 0:
-            cell_idx += 1
-            continue
+    for i, repo in enumerate(repos):
         theta = rng.uniform(0, 2 * math.pi)
-        rh = RH_BASE + (cell_idx % 5) * 13
+        rh = RH_BASE + (i % 5) * 13
         comets.append({
-            "idx": cell_idx,
+            "name": repo["name"],
+            "level": repo["level"],
+            "count": 1,
+            "ts": INTRO + i * gap,
             "theta": theta,
-            "level": level,
-            "count": count,
-            "ts": INTRO + len(comets),
             "rh": rh,
             "speed": (R0 - rh) / TRAVEL,
             "hit_pos": (CX + math.cos(theta) * rh,
                         CY + math.sin(theta) * rh),
         })
-        cell_idx += 1
     return comets
 
 
-def comet_pos(comet: dict, i: float) -> tuple[float, float]:
-    r = R0 - comet["speed"] * i
+def comet_pos(comet: dict, t: float) -> tuple[float, float]:
+    r = R0 - comet["speed"] * t
     return (CX + math.cos(comet["theta"]) * r,
             CY + math.sin(comet["theta"]) * r)
 
@@ -352,13 +335,12 @@ def closest_angle(cur: float, target: float) -> float:
 # --------------------------------------------------------------------------
 # Renderização do GIF
 # --------------------------------------------------------------------------
-def render(counts: list[tuple[int, int]], public_repos: int,
-           output: str, preview: bool) -> None:
+def render(repos: list[dict], output: str, preview: bool) -> None:
     background = build_background()
-    comets = build_comets(counts)
-    n_active = len(comets)
-    FIRING = max(1, n_active)
-    TOTAL = INTRO + FIRING + TRAVEL + EXPLOSION_MS + OUTRO
+    comets = build_comets(repos)
+    n = len(comets)
+    last_ts = comets[-1]["ts"] if n else INTRO
+    TOTAL = int(round(last_ts + TRAVEL + EXPLOSION_MS)) + OUTRO
 
     font_s = load_font(14)
     font_l = load_font(20)
@@ -391,21 +373,22 @@ def render(counts: list[tuple[int, int]], public_repos: int,
         draw = ImageDraw.Draw(frame)
         nose = draw_ship(draw, cur_angle, i)
 
-        for c in comets:
+        for k, c in enumerate(comets):
             t = i - c["ts"]
             if 0 <= t < TRAVEL:
                 px, py = comet_pos(c, t)
                 draw_comet(overlay, px, py, c["theta"], c["level"])
             elif TRAVEL <= t < TRAVEL + EXPLOSION_MS:
                 draw_explosion(overlay, c["hit_pos"], c["level"],
-                               t - TRAVEL, c["idx"])
+                               t - TRAVEL, k)
 
         if target is not None:
             p = (i - target["ts"]) / TRAVEL
             draw_laser(overlay, nose, comet_pos(target, i - target["ts"]), p)
 
         score = sum(c["count"] for c in comets if (i - c["ts"]) >= TRAVEL)
-        draw_hud(frame, score, public_repos, i, font_s, font_l)
+        target_name = target["name"] if target else None
+        draw_hud(frame, score, len(repos), target_name, i, font_s, font_l)
 
         frame = Image.alpha_composite(frame, overlay).convert("RGB")
 
@@ -450,17 +433,15 @@ def main() -> None:
         if not token:
             print("Aviso: sem GH_TOKEN/GITHUB_TOKEN. Usando dados fictícios (preview).",
                   file=sys.stderr)
-        days = mock_contributions()
-        public_repos = MOCK_REPOS
+        repos = mock_repos()
     else:
-        days, public_repos = fetch_contributions(token, username)
+        repos = fetch_repos(token, username)
 
-    counts = flat_cells(days)
     os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
-    render(counts, public_repos, args.output, args.preview)
+    render(repos, args.output, args.preview)
     size = os.path.getsize(args.output) / 1024
     print(f"GIF gerado em {args.output} ({size:.0f} KB, {WIDTH}x{HEIGHT})"
-          f" para @{username}")
+          f" para @{username} ({len(repos)} repos)")
 
 
 if __name__ == "__main__":
