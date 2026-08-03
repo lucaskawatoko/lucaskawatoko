@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Gera a animação do buraco negro devorando os commits do perfil.
+"""Gera a animação arcade "COMMIT ATTACK" para o README do perfil.
 
-Uma singularidade no grid de contribuições suga os bloquinhos um a um: uma
-frente de consumo varre o grid da esquerda para a direita e cada célula é
-puxada numa espiral (spaghettification), acelerando, esticando e brilhando
-até ser absorvida pelo anel de acreção.
+Estilo jogo de nave espacial dos anos 90: cada commit do grid de
+contribuições vira um cometa-alvo e a nave atira neles um a um, com
+explosões pixeladas e placa de SCORE contando os commits destruídos.
 
 Uso:
     python scripts/generate_contribution_animation.py [--mock] [--output PATH]
@@ -23,51 +22,53 @@ import random
 import sys
 from urllib.request import Request, urlopen
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 USERNAME = "lucaskawatoko"
 DEFAULT_OUTPUT = "imgs/contribution-animation.gif"
 
 # --------------------------------------------------------------------------
-# Layout do grid (escala do GitHub: 53 semanas x 7 dias)
+# Layout do cenário (tela do arcade)
 # --------------------------------------------------------------------------
-CELL = 10
-GAP = 3
+CELL = 7
+GAP = 2
 WEEKS = 53
 DAYS = 7
 
 GRID_W = WEEKS * CELL + (WEEKS - 1) * GAP
 GRID_H = DAYS * CELL + (DAYS - 1) * GAP
-PAD = 16
-GRID_TOP = 150
-BOTTOM_PAD = 64  # espaço extra abaixo do grid para o disco do buraco negro
-
-WIDTH = GRID_W + 2 * PAD
-HEIGHT = GRID_TOP + GRID_H + BOTTOM_PAD
+WIDTH = 740
+HEIGHT = 360
+GRID_X = 235
+GRID_Y = 149
+SHIP_X = 90
+SHIP_Y = 180
 
 FPS = 24
-STEP = 8          # px por frame no deslocamento da frente de consumo
-CONSUME = 90      # largura da frente que "engole" cada coluna
-OUTRO_FRAMES = 18  # frames finais em que o grid "regenera"
+INTRO = 24       # frames da nave entrando em cena
+FIRING = 88      # frames de tiroteio (destruição bloco a bloco)
+OUTRO = 20       # frames finais (fade + reinício)
+EXPLOSION_MS = 12  # frames de duração de cada explosão
+
+TOTAL = INTRO + FIRING + OUTRO
 
 # --------------------------------------------------------------------------
-# Buraco negro (posição relativa à grade) e paleta "cosmos"
+# Paleta retrô
 # --------------------------------------------------------------------------
-BH_X = PAD + GRID_W / 2
-BH_Y = GRID_TOP + GRID_H + 16
-EVENT_HORIZON = 13  # raio em que a célula é absorvida
-
-BG_TOP = (10, 12, 20)
-BG_BOTTOM = (1, 2, 6)
-EMPTY_CELL = (22, 27, 34)
+BG = (5, 8, 16)
+GRID_LINE = (24, 34, 56)
+EMPTY_CELL = (17, 22, 34)
 LEVELS = {
-    1: (15, 70, 66),
-    2: (21, 118, 100),
-    3: (28, 165, 134),
-    4: (45, 226, 183),
+    1: (15, 100, 88),
+    2: (21, 148, 122),
+    3: (33, 200, 158),
+    4: (72, 255, 210),
 }
-GOLD = (255, 205, 120)
-STAR = (240, 246, 252)
+CYAN = (121, 192, 255)
+GREEN = (63, 185, 80)
+YELLOW = (255, 205, 90)
+ORANGE = (255, 150, 70)
+STAR = (210, 224, 240)
 
 
 # --------------------------------------------------------------------------
@@ -146,252 +147,255 @@ def level_for(count: int) -> int:
     return 4
 
 
-def build_counts(days: list[tuple[str, int]]) -> list[list[int]]:
-    counts = [[0] * DAYS for _ in range(WEEKS)]
-    for week_idx in range(WEEKS):
-        for day_idx in range(DAYS):
-            pos = week_idx * DAYS + day_idx
-            if pos < len(days):
-                counts[week_idx][day_idx] = level_for(days[pos][1])
-    return counts
+def flat_cells(days: list[tuple[str, int]]) -> list[tuple[int, int]]:
+    """Retorna (level, contagem real) por célula, na ordem (w, d)."""
+    return [(level_for(count), count) for _, count in days]
 
 
 # --------------------------------------------------------------------------
-# Fundo estático: gradiente + nebulosas + estrelas
+# Tipografia (fonte mono retrô)
+# --------------------------------------------------------------------------
+def load_font(size: int) -> ImageFont.ImageFont:
+    candidates = (
+        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
+        "/usr/share/fonts/dejavu/DejaVuSansMono-Bold.ttf",
+    )
+    for path in candidates:
+        if os.path.exists(path):
+            return ImageFont.truetype(path, size)
+    return ImageFont.load_default()
+
+
+# --------------------------------------------------------------------------
+# Cenário estático: fundo + linhas de grade retrô + estrelas + scanlines
 # --------------------------------------------------------------------------
 def build_background() -> Image.Image:
-    img = Image.new("RGBA", (WIDTH, HEIGHT), BG_BOTTOM + (255,))
+    img = Image.new("RGBA", (WIDTH, HEIGHT), BG + (255,))
     draw = ImageDraw.Draw(img)
-    for y in range(HEIGHT):
-        t = y / max(1, HEIGHT - 1)
-        color = tuple(round(a + (b - a) * t) for a, b in zip(BG_TOP, BG_BOTTOM))
-        draw.line([(0, y), (WIDTH, y)], fill=color + (255,))
+
+    for x in range(0, WIDTH, 28):
+        draw.line([(x, 0), (x, HEIGHT)], fill=GRID_LINE + (90,), width=1)
+    for y in range(0, HEIGHT, 28):
+        draw.line([(0, y), (WIDTH, y)], fill=GRID_LINE + (90,), width=1)
+
+    rng = random.Random(11)
+    for _ in range(90):
+        x = rng.randint(0, WIDTH - 1)
+        y = rng.randint(0, HEIGHT - 1)
+        alpha = rng.randint(30, 150)
+        color = STAR if rng.random() < 0.85 else CYAN
+        draw.ellipse((x, y, x + 1, y + 1), fill=color + (alpha,))
+
+    for y in range(0, HEIGHT, 3):
+        draw.line([(0, y), (WIDTH, y)], fill=(0, 0, 0, 22), width=1)
+
     return img
 
 
-def _radial_glow(draw: ImageDraw.ImageDraw, cx: float, cy: float, radius: int,
-                 color: tuple[int, int, int], peak: int) -> None:
-    for r in range(radius, 0, -1):
-        alpha = int((1 - r / radius) * peak)
-        draw.ellipse((cx - r, cy - r, cx + r, cy + r), fill=color + (alpha,))
-
-
-def build_nebula_layer() -> Image.Image:
-    layer = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(layer)
-    _radial_glow(draw, 90, 60, 210, (74, 62, 158), 16)
-    _radial_glow(draw, WIDTH - 120, 90, 200, (30, 130, 160), 14)
-    return layer
-
-
-def build_star_layer() -> Image.Image:
-    rng = random.Random(7)
-    layer = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(layer)
-    for _ in range(150):
-        x = rng.randint(0, WIDTH - 1)
-        y = rng.randint(0, GRID_TOP - 20)
-        alpha = rng.randint(50, 200)
-        radius = rng.choice((1, 1, 1, 2))
-        color = STAR if rng.random() < 0.85 else GOLD
-        draw.ellipse((x - radius, y - radius, x + radius, y + radius),
-                     fill=color + (alpha,))
-    for _ in range(8):
-        x = rng.randint(0, WIDTH - 1)
-        y = rng.randint(10, GRID_TOP - 40)
-        alpha = rng.randint(80, 160)
-        r = 1.6
-        draw.line([(x - 3, y), (x + 3, y)], fill=STAR + (alpha,), width=1)
-        draw.line([(x, y - 3), (x, y + 3)], fill=STAR + (alpha,), width=1)
-        draw.ellipse((x - r, y - r, x + r, y + r), fill=STAR + (alpha + 40,))
-    return layer
-
-
-# --------------------------------------------------------------------------
-# Grade de contribuições
-# --------------------------------------------------------------------------
 def draw_panel(draw: ImageDraw.ImageDraw) -> None:
-    x0 = PAD - 5
-    y0 = GRID_TOP - 5
-    x1 = PAD + GRID_W + 5
-    y1 = GRID_TOP + GRID_H + 5
-    draw.rounded_rectangle((x0, y0, x1, y1), radius=8,
-                           outline=(48, 54, 61, 150), width=1)
-
-
-# --------------------------------------------------------------------------
-# Buraco negro: horizonte de eventos + anel de acreção
-# --------------------------------------------------------------------------
-def draw_black_hole(overlay: Image.Image, frame_i: int) -> None:
-    draw = ImageDraw.Draw(overlay)
-    pulse = 1 + 0.06 * math.sin(frame_i * 0.35)
-    tilt = 0.72  # achatamento do disco (perspectiva)
-
-    def ring(rx: float, alpha: int, color: tuple[int, int, int],
-             width: int) -> None:
-        r = rx * pulse
-        draw.ellipse((BH_X - r, BH_Y - r * tilt,
-                      BH_X + r, BH_Y + r * tilt),
-                     outline=color + (alpha,), width=width)
-
-    ring(40, 14, (255, 190, 110), 10)
-    ring(26, 90, (255, 185, 105), 7)
-    ring(19, 150, (255, 215, 150), 4)
-    ring(15, 220, (255, 240, 210), 2)
-
-    # Partículas quentes em órbita (anel "irradiado")
-    for i in range(3):
-        a = frame_i * 0.5 + i * (2 * math.pi / 3)
-        px = BH_X + math.cos(a) * 21
-        py = BH_Y + math.sin(a) * 21 * tilt
-        alpha = int(170 + 70 * math.sin(frame_i * 0.9 + i))
-        draw.ellipse((px - 2, py - 2, px + 2, py + 2),
-                     fill=(255, 235, 190, alpha))
-
-    # Horizonte de eventos
-    r = EVENT_HORIZON
-    draw.ellipse((BH_X - r, BH_Y - r, BH_X + r, BH_Y + r),
-                 fill=(0, 0, 0, 255))
-    draw.ellipse((BH_X - r, BH_Y - r, BH_X + r, BH_Y + r),
-                 outline=(255, 255, 255, 200), width=1)
-
-
-# --------------------------------------------------------------------------
-# Frente de consumo e vórtice espiral (spaghettification)
-# --------------------------------------------------------------------------
-def draw_front(overlay: Image.Image, bx: float) -> None:
-    draw = ImageDraw.Draw(overlay)
-    if bx < PAD - 4 or bx > PAD + GRID_W + 4:
-        return
-    draw.line([(bx, GRID_TOP), (bx, GRID_TOP + GRID_H)],
-              fill=GOLD + (36,), width=2)
-    for off, alpha in ((3, 22), (6, 12), (10, 8)):
-        draw.line([(bx - off, GRID_TOP), (bx - off, GRID_TOP + GRID_H)],
-                  fill=GOLD + (alpha,), width=2)
-        draw.line([(bx + off, GRID_TOP), (bx + off, GRID_TOP + GRID_H)],
-                  fill=GOLD + (alpha,), width=2)
-
-
-def _lerp(a: tuple[int, int, int], b: tuple[int, int, int],
-          t: float) -> tuple[int, int, int]:
-    return tuple(round(x + (y - x) * t) for x, y in zip(a, b))
+    draw.rounded_rectangle(
+        (GRID_X - 6, GRID_Y - 6, GRID_X + GRID_W + 6, GRID_Y + GRID_H + 6),
+        radius=4, outline=CYAN + (120,), width=1,
+    )
 
 
 def cell_geometry() -> list[tuple[float, float]]:
     centers: list[tuple[float, float]] = []
     for w in range(WEEKS):
         for d in range(DAYS):
-            gx = PAD + w * (CELL + GAP)
-            gy = GRID_TOP + d * (CELL + GAP)
-            centers.append((gx + CELL / 2, gy + CELL / 2))
+            gx = GRID_X + w * (CELL + GAP) + CELL / 2
+            gy = GRID_Y + d * (CELL + GAP) + CELL / 2
+            centers.append((gx, gy))
     return centers
 
 
-def flat_levels(counts: list[list[int]]) -> list[int]:
-    return [counts[w][d] for w in range(WEEKS) for d in range(DAYS)]
-
-
-def draw_grid(draw: ImageDraw.ImageDraw, levels: list[int],
+def draw_grid(draw: ImageDraw.ImageDraw,
               centers: list[tuple[float, float]],
-              pvals: list[float]) -> None:
-    for (cx, cy), level, p in zip(centers, levels, pvals):
+              cells: list[tuple[int, int]],
+              destroyed: set[int]) -> None:
+    for idx, (cx, cy) in enumerate(centers):
+        level, _ = cells[idx]
         gx = cx - CELL / 2
         gy = cy - CELL / 2
-        full = LEVELS[level] if level > 0 else EMPTY_CELL
-        if p > 0.6:
-            t = min(1.0, (p - 0.6) / 0.4)
-            full = _lerp(full, EMPTY_CELL, t)
-        draw.rectangle((gx, gy, gx + CELL - 1, gy + CELL - 1), fill=full)
+        if level == 0:
+            draw.rectangle((gx, gy, gx + CELL - 1, gy + CELL - 1),
+                           fill=EMPTY_CELL)
+        elif idx in destroyed:
+            draw.rectangle((gx, gy, gx + CELL - 1, gy + CELL - 1),
+                           fill=EMPTY_CELL)
+        else:
+            draw.rectangle((gx, gy, gx + CELL - 1, gy + CELL - 1),
+                           fill=LEVELS[level])
 
 
-def consumption(cells: list[tuple[float, float]], bx: float,
-                outro: float) -> list[float]:
-    return [max(0.0, min(1.0, (bx - cx) / CONSUME)) * outro
-            for cx, _ in cells]
-
-
-def draw_vortex(overlay: Image.Image, levels: list[int],
-                centers: list[tuple[float, float]],
-                pvals: list[float]) -> None:
+def draw_cell_glow(overlay: Image.Image,
+                   centers: list[tuple[float, float]],
+                   cells: list[tuple[int, int]],
+                   destroyed: set[int]) -> None:
     draw = ImageDraw.Draw(overlay)
-    for (cx, cy), level, p in zip(centers, levels, pvals):
-        if p <= 0 or p >= 1:
+    for idx, (cx, cy) in enumerate(centers):
+        level, _ = cells[idx]
+        if level == 0 or idx in destroyed:
             continue
+        r = CELL + 2
+        draw.rectangle((cx - r, cy - r, cx + r, cy + r),
+                       fill=LEVELS[level] + (38,))
 
-        dx = cx - BH_X
-        dy = cy - BH_Y
-        r0 = math.hypot(dx, dy)
-        if r0 <= EVENT_HORIZON:
-            continue
-        theta0 = math.atan2(dy, dx)
 
-        tt = p
-        r = r0 * (1 - tt ** 1.6)
-        if r <= 3:
-            continue
-        theta = theta0 + 4.6 * tt * tt
-        x = BH_X + r * math.cos(theta)
-        y = BH_Y + r * math.sin(theta)
+# --------------------------------------------------------------------------
+# Nave espacial
+# --------------------------------------------------------------------------
+def draw_ship(draw: ImageDraw.ImageDraw, frame_i: int) -> tuple[float, float]:
+    bob = math.sin(frame_i * 0.4) * 3
+    yy = SHIP_Y + bob
+    x = SHIP_X
+    draw.polygon([(x + 30, yy), (x + 8, yy + 9), (x - 18, yy + 9),
+                  (x - 18, yy - 9), (x + 8, yy - 9)],
+                 fill=(13, 22, 44), outline=CYAN)
+    draw.polygon([(x + 8, yy - 9), (x - 8, yy - 22), (x - 6, yy - 8)],
+                 fill=CYAN)
+    draw.polygon([(x + 8, yy + 9), (x - 8, yy + 22), (x - 6, yy + 8)],
+                 fill=CYAN)
+    draw.ellipse((x + 2, yy - 3, x + 12, yy + 3), fill=(80, 255, 220))
+    flame = 12 + 5 * math.sin(frame_i * 0.8)
+    draw.polygon([(x - 18, yy - 4), (x - 18, yy + 4), (x - 18 - flame, yy)],
+                 fill=ORANGE)
+    return x + 30, yy  # ponta da nave
 
-        # Estica na direção tangencial (spaghettification)
-        tx = -math.sin(theta)
-        ty = math.cos(theta)
-        length = CELL * (1 + 1.6 * tt)
-        width = max(1, round(CELL * (1 - 0.55 * tt)))
 
-        fade = max(0.0, min(1.0, (r - 4) / 9))
-        base = LEVELS[level] if level > 0 else (60, 90, 85)
-        color = _lerp(base, GOLD, min(1.0, tt * 1.25))
-        color = _lerp(color, (255, 245, 225), max(0.0, tt - 0.75))
-        alpha = int(255 * fade)
+def draw_beam(overlay: Image.Image, nose: tuple[float, float],
+              target: tuple[float, float], frame_i: int) -> None:
+    draw = ImageDraw.Draw(overlay)
+    x0, y0 = nose
+    x1, y1 = target
+    draw.line((x0, y0, x1, y1), fill=CYAN + (60,), width=5)
+    draw.line((x0, y0, x1, y1), fill=(255, 255, 255, 200), width=2)
+    draw.line((x0, y0, x1, y1), fill=CYAN + (255,), width=1)
+    # clarão no cano da nave
+    draw.ellipse((x0 - 4, y0 - 4, x0 + 4, y0 + 4),
+                 fill=(255, 255, 255, 220))
 
-        draw.line((x - tx * length / 2, y - ty * length / 2,
-                   x + tx * length / 2, y + ty * length / 2),
-                  fill=color + (alpha,), width=width)
-        core = 1.5 + 2.2 * tt
-        draw.ellipse((x - core, y - core, x + core, y + core),
-                     fill=(255, 255, 255, alpha))
-        glow = 4 + 5 * tt
-        draw.ellipse((x - glow, y - glow, x + glow, y + glow),
-                     fill=GOLD + (int(alpha * 0.28),))
+
+# --------------------------------------------------------------------------
+# Explosão pixelada
+# --------------------------------------------------------------------------
+def draw_explosion(overlay: Image.Image, cell_idx: int,
+                   center: tuple[float, float], level: int, age: float,
+                   cell_count: int) -> None:
+    draw = ImageDraw.Draw(overlay)
+    t = min(1.0, age / EXPLOSION_MS)
+    cx, cy = center
+    r = 2 + 9 * t
+    draw.ellipse((cx - r, cy - r, cx + r, cy + r),
+                 fill=(255, 255, 255, int(190 * (1 - t))))
+    for k in range(8):
+        angle = (cell_idx * 2.399 + k * 2.513) % (2 * math.pi)
+        dist = 2 + 15 * t
+        px = cx + math.cos(angle) * dist
+        py = cy + math.sin(angle) * dist
+        color = LEVELS[level] if k % 3 else ORANGE
+        alpha = int(240 * (1 - t))
+        size = 2
+        draw.rectangle((px - size, py - size, px + size, py + size),
+                       fill=color + (alpha,))
+
+
+# --------------------------------------------------------------------------
+# Placas de texto
+# --------------------------------------------------------------------------
+def draw_hud(frame: Image.Image, score: int, i: int, font_s: ImageFont.ImageFont,
+             font_l: ImageFont.ImageFont) -> None:
+    draw = ImageDraw.Draw(frame)
+    draw.text((24, 16), "SCORE", font=font_s, fill=(150, 160, 180, 255))
+    draw.text((24, 38), f"{score:05d}", font=font_l, fill=GREEN + (255,))
+    draw.text((24, 78), f"COMMITS: {score}", font=font_s,
+              fill=(150, 160, 180, 255))
+    if i < INTRO:
+        title = "COMMIT ATTACK"
+        tw = draw.textlength(title, font=font_l)
+        draw.text(((WIDTH - tw) / 2, 18), title, font=font_l,
+                  fill=YELLOW + (255,))
+        sub = "desvie dos cometas!"
+        sw = draw.textlength(sub, font=font_s)
+        draw.text(((WIDTH - sw) / 2, 48), sub, font=font_s,
+                  fill=CYAN + (200,))
 
 
 # --------------------------------------------------------------------------
 # Renderização do GIF
 # --------------------------------------------------------------------------
-def render(counts: list[list[int]], output: str, preview: bool) -> None:
+def render(counts: list[tuple[int, int]], output: str, preview: bool) -> None:
     background = build_background()
-    star_layer = build_star_layer()
-    nebula_layer = build_nebula_layer()
     centers = cell_geometry()
-    levels = flat_levels(counts)
-
-    consume_frames = math.ceil((WIDTH + 80) / STEP)
-    total = consume_frames + OUTRO_FRAMES
+    active: list[dict] = []
+    for idx, (level, count) in enumerate(counts):
+        if level > 0:
+            active.append({
+                "idx": idx,
+                "center": centers[idx],
+                "level": level,
+                "count": count,
+            })
+    n_active = len(active)
+    font_s = load_font(14)
+    font_l = load_font(20)
     frames: list[Image.Image] = []
 
-    for i in range(total):
-        if i < consume_frames:
-            bx = -40 + i * STEP
-        else:
-            bx = -40 + consume_frames * STEP
-        outro = min(1.0, max(0.0, 1.0 - (i - consume_frames) / OUTRO_FRAMES))
-        pvals = consumption(centers, bx, outro)
+    for i in range(TOTAL):
+        frame = background.copy()
 
-        base = background.copy()
-        base = Image.alpha_composite(base, nebula_layer)
-        base = Image.alpha_composite(base, star_layer)
-        draw = ImageDraw.Draw(base)
+        if i < INTRO:
+            n_hit = 0
+            destroyed: set[int] = set()
+            target: dict | None = None
+        elif i < INTRO + FIRING:
+            p = (i - INTRO) / FIRING
+            n_hit = min(n_active, round(p * n_active))
+            destroyed = {a["idx"] for a in active[:n_hit]}
+            target = active[min(n_hit, n_active - 1)] if n_hit < n_active else None
+        else:
+            n_hit = n_active
+            destroyed = {a["idx"] for a in active}
+            target = None
+
+        draw = ImageDraw.Draw(frame)
         draw_panel(draw)
-        draw_grid(draw, levels, centers, pvals)
+        draw_grid(draw, centers, counts, destroyed)
 
         overlay = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
-        draw_black_hole(overlay, i)
-        draw_front(overlay, bx)
-        draw_vortex(overlay, levels, centers, pvals)
+        draw_cell_glow(overlay, centers, counts, destroyed)
 
-        frame = Image.alpha_composite(base, overlay).convert("RGB")
-        frames.append(frame.quantize(colors=128, method=Image.FASTOCTREE))
+        nose = draw_ship(draw, i)
+        if target is not None:
+            draw_beam(overlay, nose, target["center"], i)
+
+        # Explosões (continuam no OUTRO até terminarem)
+        if i >= INTRO:
+            for k, a in enumerate(active):
+                age = (i - INTRO) - k * (FIRING / n_active)
+                if 0 <= age < EXPLOSION_MS:
+                    draw_explosion(overlay, a["idx"], a["center"],
+                                   a["level"], age, n_active)
+
+        # Placa de score
+        score = 0
+        if i >= INTRO:
+            for k, a in enumerate(active):
+                age = (i - INTRO) - k * (FIRING / n_active)
+                if age >= EXPLOSION_MS:
+                    score += a["count"]
+        draw_hud(frame, score, i, font_s, font_l)
+
+        frame = Image.alpha_composite(frame, overlay).convert("RGB")
+
+        # Fade de reinício no OUTRO
+        if i >= INTRO + FIRING:
+            t = (i - INTRO - FIRING) / OUTRO
+            black = Image.new("RGB", (WIDTH, HEIGHT), (0, 0, 0))
+            frame = Image.blend(frame, black, min(1.0, t * 1.1))
+
+        frames.append(frame)
 
     if preview and frames:
         frames[0].save(output.replace(".gif", ".png"))
@@ -428,7 +432,7 @@ def main() -> None:
     else:
         days = fetch_contributions(token)
 
-    counts = build_counts(days)
+    counts = flat_cells(days)
     os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
     render(counts, args.output, args.preview)
     size = os.path.getsize(args.output) / 1024
