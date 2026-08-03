@@ -29,9 +29,8 @@ jobs:
         with:
           username: ${{ vars.GH_USER || github.repository_owner }}
           data: repos
-          color: "#aac8d6"       # azul calcinha do fusca
-          background: "#0d1117"  # fundo GitHub dark
-          food: "#e5534b"        # comida vermelha
+          color: "#aac8d6"  # azul calcinha do fusca
+          food: "#e5534b"   # comida vermelha
           output: imgs/contribution-animation.gif
 
       - name: Commitar GIF atualizado
