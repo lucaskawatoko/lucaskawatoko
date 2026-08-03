@@ -1,0 +1,45 @@
+name: Gerar animação de contribuições
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: contribution-animation
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: pip install pillow
+
+      - name: Gerar animação
+        run: python scripts/generate_contribution_animation.py
+
+      - name: Commitar GIF atualizado
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add imgs/contribution-animation.gif
+          if git diff --cached --quiet; then
+            echo "Sem mudanças na animação."
+          else
+            git commit -m "Atualizar animação de contribuições"
+            git push
+          fi
