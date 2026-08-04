@@ -28,16 +28,24 @@ jobs:
         uses: lucaskawatoko/git-maker/.github/actions/generate-gifs@main
         with:
           username: ${{ vars.GH_USER || github.repository_owner }}
-          data: repos
+          data: followers
           color: "#aac8d6"  # azul calcinha do fusca
           food: "#e5534b"   # comida vermelha
           output: imgs/contribution-animation.gif
+
+      - name: Cache-busting automático (v = hash do GIF)
+        run: |
+          GIF_HASH=$(git hash-object imgs/contribution-animation.gif | cut -c1-7)
+          sed -i -E \
+            's/contribution-animation\.gif\?v=[^"]+/contribution-animation.gif?v='"$GIF_HASH"'/' \
+            readme.md
+          echo "v=$GIF_HASH"
 
       - name: Commitar GIF atualizado
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add imgs/contribution-animation.gif
+          git add imgs/contribution-animation.gif readme.md
           if git diff --cached --quiet; then
             echo "Sem mudanças na animação."
           else

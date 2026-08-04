@@ -28,8 +28,7 @@
 ## Atividade
 
 <div align="center">
-  <img src="imgs/contribution-animation.gif?v=13" alt="Cobrinha comendo meus repositórios" width="700" />
-  <p><em>a cobrinha come meus repositórios públicos</em></p>
+  <img src="imgs/contribution-animation.gif?v=b5fa9d7" alt="Cobrinha comendo meus seguidores" width="700" />
 </div>
 
 ---
