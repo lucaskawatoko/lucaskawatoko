@@ -9,12 +9,6 @@
 <br>
 
 <div align="center">
-  <img src="imgs/profile-ascii.gif?v=500c9e4" alt="Lucas em ASCII" width="360" />
-</div>
-
-<br>
-
-<div align="center">
   <img height="160em"
     src="https://github-readme-stats.vercel.app/api?username=lucaskawatoko&theme=github_dark&show_icons=true&include_all_commits=true&count_private=true&hide_border=true"
     alt="GitHub stats" />
@@ -87,5 +81,5 @@
   <a href="https://github.com/lucaskawatoko/git-maker">
     <img src="https://img.shields.io/badge/git--maker-snake--custom-3fb950?style=flat&logo=github&logoColor=white" alt="git-maker" />
   </a>
-  <p>Basta clicar aqui! Crie o seu no repositório <a href="https://github.com/lucaskawatoko/git-maker">git-maker</a> — cobrinha (repos, commits ou seguidores), foto em ASCII e cores, tudo personalizável em hex.</p>
+  <p>Basta clicar aqui! Crie o seu no repositório <a href="https://github.com/lucaskawatoko/git-maker">git-maker</a> — cobrinha (repos, commits ou seguidores), tudo personalizável em hex.</p>
 </div>
