@@ -9,7 +9,7 @@
 <br>
 
 <div align="center">
-  <img src="imgs/profile-ascii.gif?v=cfdd852" alt="Lucas em ASCII" width="360" />
+  <img src="imgs/profile-ascii.gif?v=a93a3b2" alt="Lucas em ASCII" width="360" />
 </div>
 
 <br>
