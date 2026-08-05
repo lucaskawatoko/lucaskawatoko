@@ -32,19 +32,29 @@ jobs:
           food: "#e5534b"   # comida vermelha
           output: imgs/contribution-animation.gif
 
-      - name: Cache-busting automático (v = hash do GIF)
+      - name: Gerar foto ASCII (impressão do avatar)
+        uses: lucaskawatoko/git-maker/.github/actions/ascii-printer@main
+        with:
+          username: ${{ vars.GH_USER || github.repository_owner }}
+          output: imgs/profile-ascii.gif
+
+      - name: Cache-busting automático (v = hash dos GIFs)
         run: |
           GIF_HASH=$(git hash-object imgs/contribution-animation.gif | cut -c1-7)
           sed -i -E \
             's/contribution-animation\.gif\?v=[^"]+/contribution-animation.gif?v='"$GIF_HASH"'/' \
             readme.md
-          echo "v=$GIF_HASH"
+          ASCII_HASH=$(git hash-object imgs/profile-ascii.gif | cut -c1-7)
+          sed -i -E \
+            's/profile-ascii\.gif\?v=[^"]+/profile-ascii.gif?v='"$ASCII_HASH"'/' \
+            readme.md
+          echo "v=$GIF_HASH ascii=$ASCII_HASH"
 
-      - name: Commitar GIF atualizado
+      - name: Commitar GIFs atualizados
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add imgs/contribution-animation.gif readme.md
+          git add imgs/contribution-animation.gif imgs/profile-ascii.gif readme.md
           if git diff --cached --quiet; then
             echo "Sem mudanças na animação."
           else
