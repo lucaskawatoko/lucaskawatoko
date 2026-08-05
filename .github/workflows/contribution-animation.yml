@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
     paths:
-      - "readme.md"
       - ".github/workflows/contribution-animation.yml"
   schedule:
     - cron: "17 3 * * *"
@@ -24,7 +23,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Gerar animação (cobrinha comendo seus repositórios)
+      - name: Gerar animação (cobrinha comendo seus seguidores)
         uses: lucaskawatoko/git-maker/.github/actions/generate-gifs@main
         with:
           username: ${{ vars.GH_USER || github.repository_owner }}
