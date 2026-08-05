@@ -28,7 +28,7 @@
 ## Atividade
 
 <div align="center">
-  <img src="imgs/contribution-animation.gif?v=b5fa9d7" alt="Cobrinha comendo meus seguidores" width="700" />
+  <img src="imgs/contribution-animation.gif?v=dc558df" alt="Cobrinha comendo meus seguidores" width="700" />
 </div>
 
 ---
