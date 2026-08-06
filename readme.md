@@ -28,7 +28,7 @@
 ## Atividade
 
 <div align="center">
-  <img src="imgs/contribution-animation.gif?v=89a49f8" alt="Cobrinha comendo meus seguidores" width="700" />
+  <img src="imgs/contribution-animation.gif?v=e65406c" alt="Breakout quebrando meus seguidores" width="700" />
 </div>
 
 ---
@@ -79,7 +79,7 @@
 
 <div align="center">
   <a href="https://github.com/lucaskawatoko/git-maker">
-    <img src="https://img.shields.io/badge/git--maker-snake--custom-3fb950?style=flat&logo=github&logoColor=white" alt="git-maker" />
+    <img src="https://img.shields.io/badge/git--maker-gif--custom-3fb950?style=flat&logo=github&logoColor=white" alt="git-maker" />
   </a>
-  <p>Basta clicar aqui! Crie o seu no repositório <a href="https://github.com/lucaskawatoko/git-maker">git-maker</a> — cobrinha (repos, commits ou seguidores), tudo personalizável em hex.</p>
+  <p>Basta clicar aqui! Crie o seu no repositório <a href="https://github.com/lucaskawatoko/git-maker">git-maker</a> — cobrinha ou breakout (repos, commits ou seguidores), tudo personalizável em hex.</p>
 </div>

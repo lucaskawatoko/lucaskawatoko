@@ -23,11 +23,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Gerar animação (cobrinha comendo seus seguidores)
+      - name: Gerar animação (breakout quebrando seus seguidores)
         uses: lucaskawatoko/git-maker/.github/actions/generate-gifs@main
         with:
           username: ${{ vars.GH_USER || github.repository_owner }}
           data: followers
+          game: breakout
+          smooth: false  # GIF leve (~2.5 MB); true fica mais fluido (~4 MB)
           color: "#aac8d6"  # azul calcinha do fusca
           food: "#e5534b"   # comida vermelha
           output: imgs/contribution-animation.gif
