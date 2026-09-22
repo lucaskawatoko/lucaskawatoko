@@ -28,7 +28,7 @@
 ## Atividade
 
 <div align="center">
-  <img src="imgs/contribution-animation.gif?v=3b4f139" alt="Breakout quebrando meus seguidores" width="700" />
+  <img src="imgs/contribution-animation.gif?v=6b5ca73" alt="Breakout quebrando meus seguidores" width="700" />
 </div>
 
 ---
