@@ -1,26 +1,5 @@
 <div align="center">
-  <a href="https://git.io/typing-svg">
-    <img
-      src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=300&duration=3200&pause=900&center=true&vCenter=true&width=700&lines=Ol%C3%A1%2C+sou+Lucas+Kawatoko;Desenvolvedor+back-end%2C+focado+em+Python;Gosto+de+resolver+problemas+com+simplicidade"
-      alt="Typing SVG" />
-  </a>
-</div>
-
-<br>
-
-<div align="center">
-  <img height="160em"
-    src="https://github-readme-stats.vercel.app/api?username=lucaskawatoko&theme=github_dark&show_icons=true&include_all_commits=true&count_private=true&hide_border=true"
-    alt="GitHub stats" />
-  <img height="160em"
-    src="https://github-readme-stats.vercel.app/api/top-langs/?username=lucaskawatoko&theme=github_dark&layout=compact&hide_border=true"
-    alt="Linguagens mais usadas" />
-</div>
-
-<div align="center">
-  <img src="https://img.shields.io/github/followers/lucaskawatoko?style=flat&label=seguidores&color=2f81f7&logo=github&logoColor=white" alt="Seguidores" />
-  <img src="https://img.shields.io/github/stars/lucaskawatoko?style=flat&label=estrelas&color=2f81f7&logo=github&logoColor=white" alt="Estrelas" />
-  <img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Fusers%2Flucaskawatoko&query=%24.public_repos&style=flat&label=repos&color=2f81f7&logo=github&logoColor=white" alt="Repositórios" />
+  <img src="imgs/profile-ascii.gif?v=bb38c3e" alt="LUCAS KAWATOKO em ASCII" width="720" />
 </div>
 
 ---
